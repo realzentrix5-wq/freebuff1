@@ -1,0 +1,15 @@
+name: freebuff1
+version: '${project.version}'
+main: com.example.freebuff1.Freebuff1Plugin
+api-version: '1.21'
+description: A Paper Minecraft plugin
+authors: [realzentrix5-wq]
+commands:
+  freebuff1:
+    description: Main freebuff1 command
+    usage: /freebuff1
+    permission: freebuff1.use
+permissions:
+  freebuff1.use:
+    description: Allows use of the freebuff1 command
+    default: true

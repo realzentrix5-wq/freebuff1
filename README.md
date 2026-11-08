@@ -1,60 +1,43 @@
 # freebuff1
 
-A small Node.js / Express API.
+A Paper Minecraft plugin.
 
 ## Requirements
 
-- Node.js 20+
+- JDK 21+
+- Maven 3.9+
+- A Paper server (1.21.x)
 
-## Setup
-
-```bash
-npm install
-cp .env.example .env   # optional, PORT defaults to 3000
-```
-
-## Run
+## Build
 
 ```bash
-npm start   # production
-npm run dev # reload on file changes
+mvn package
 ```
 
-The server listens on `http://localhost:3000`.
+The plugin jar is written to `target/freebuff1-0.1.0.jar`.
 
-## Endpoints
+## Install
 
-| Method | Path             | Description                    |
-| ------ | ---------------- | ------------------------------ |
-| GET    | `/health`        | Health check                   |
-| GET    | `/api/items`     | List items                     |
-| GET    | `/api/items/:id` | Get one item                   |
-| POST   | `/api/items`     | Create an item `{ "name": "" }`|
-| PATCH  | `/api/items/:id` | Rename an item `{ "name": "" }`|
-| DELETE | `/api/items/:id` | Delete an item                 |
-
-### Example
-
-```bash
-curl -X POST http://localhost:3000/api/items \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"first"}'
-
-curl http://localhost:3000/api/items
-```
-
-## Notes
-
-Items are stored in memory, so they reset when the server restarts. Swap the store in
-`src/routes/items.js` for a database when you need persistence.
+1. Build the jar (or copy it from `target/`).
+2. Drop it into your server's `plugins/` folder.
+3. Restart the server.
+4. Run `/freebuff1` in game.
 
 ## Project layout
 
 ```
-src/
-  app.js            Express app and middleware
-  server.js         Entrypoint / listen
-  routes/
-    health.js       GET /health
-    items.js        /api/items CRUD
+pom.xml
+src/main/java/com/example/freebuff1/Freebuff1Plugin.java
+src/main/resources/plugin.yml
 ```
+
+- `pom.xml` — Maven build, depends on `paper-api` with `provided` scope (the server ships
+  the API at runtime, so it is not bundled into the jar).
+- `plugin.yml` — plugin metadata, command and permission declarations.
+- `Freebuff1Plugin.java` — main class, extends `JavaPlugin`.
+
+## Development
+
+- `mvn clean package` for a fresh build.
+- Change the `name`, `group`/`package` and command names if you want a different plugin id.
+- Bump `version` in `pom.xml` to release a new build; `plugin.yml` picks it up automatically.
