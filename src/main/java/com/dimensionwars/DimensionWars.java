@@ -1253,12 +1253,17 @@ TabCompleter {
         for (x = -r; x <= r; ++x) {
             for (z = -r; z <= r; ++z) {
                 int y;
+                boolean edge = Math.abs(x) == r || Math.abs(z) == r;
                 world.getBlockAt(cx + x, cy - 1, cz + z).setType(dimension.kingdomAccent(), false);
-                for (y = 0; y <= 6; ++y) {
-                    boolean edge;
-                    boolean bl = edge = Math.abs(x) == r || Math.abs(z) == r;
-                    if (!edge) continue;
-                    world.getBlockAt(cx + x, cy + y, cz + z).setType(dimension.cageBar(), false);
+                if (!edge) {
+                    // Hollow the chamber so a pasted map cannot bury the sleeping boss.
+                    for (y = 0; y <= 6; ++y) {
+                        world.getBlockAt(cx + x, cy + y, cz + z).setType(Material.AIR, false);
+                    }
+                } else {
+                    for (y = 0; y <= 6; ++y) {
+                        world.getBlockAt(cx + x, cy + y, cz + z).setType(dimension.cageBar(), false);
+                    }
                 }
                 for (y = 7; y <= 8; ++y) {
                     world.getBlockAt(cx + x, cy + y, cz + z).setType(dimension.kingdomAccent(), false);
