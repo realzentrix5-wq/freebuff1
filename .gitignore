@@ -4,3 +4,14 @@ target/
 *.iml
 .vscode/
 .DS_Store
+
+_server/
+_incoming/
+_tools/bot/node_modules/
+
+# Uploaded raw material kept locally for reference
+*.jar
+*.zip
+*.schematic
+*.schem
+!src/main/resources/schematics/*.schem

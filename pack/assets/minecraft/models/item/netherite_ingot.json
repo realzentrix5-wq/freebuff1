@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/netherite_ingot"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 3001
+      },
+      "model": "dimensionwars:item/key_nether"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 3002
+      },
+      "model": "dimensionwars:item/key_end"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 3003
+      },
+      "model": "dimensionwars:item/key_overworld"
+    }
+  ]
+}

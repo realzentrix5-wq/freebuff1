@@ -1,15 +1,22 @@
-name: freebuff1
-version: '${project.version}'
-main: com.example.freebuff1.Freebuff1Plugin
+name: DimensionWars
+version: 2.1.0
+main: com.dimensionwars.DimensionWars
 api-version: '1.21'
-description: A Paper Minecraft plugin
-authors: [realzentrix5-wq]
+author: Eclipse SMP
+description: Three 400x400 kingdoms, waking bosses with three phases and four abilities each, key portals, altar revival rituals and the Netherite Warblade.
+website: https://papermc.io/
 commands:
-  freebuff1:
-    description: Main freebuff1 command
-    usage: /freebuff1
-    permission: freebuff1.use
+  dw:
+    description: Eclipse SMP player and administration commands
+    usage: "/dw <menu [player]|info|key portal [dimension]|warlord sword <player>|kingdom <build|tp> <dimension>|setspawn <dimension>|setaltar <dimension>|setportal <dimension>|boss spawn <dimension>|boss reset [dimension]|spawn boss <dimension>|ritual start <dimension>|redeem <code>|give-key <dimension>|resetplayer <player>|give-table|pack|reset|reload>"
+    aliases: [dimensionwars, eclipse]
 permissions:
-  freebuff1.use:
-    description: Allows use of the freebuff1 command
+  dimensionwars.admin:
+    description: Allows kingdoms, spawns, altars, portals, bosses, rituals, warblades, resets and reloads
+    default: op
+  dimensionwars.menu:
+    description: Allows opening the realm selector
+    default: true
+  dimensionwars.info:
+    description: Allows viewing realm player counts
     default: true

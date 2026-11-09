@@ -1,0 +1,241 @@
+# Eclipse SMP configuration for Paper 1.21.11
+# Every kingdom, boss and portal is generated from this file; no manual setup needed.
+
+capacity-per-dimension: 10
+teleport-countdown-seconds: 5
+
+# Show the realm selector to every player, including players who already have a realm.
+world-selector:
+  open-on-join: true
+
+# Maximum hearts per player, based on their dimension's boss state.
+hearts:
+  default: 10
+  defeated: 5
+  ritual: 8
+  blessed: 12
+
+boss-healing:
+  amount: 25.0
+  cooldown-seconds: 5
+  items:
+    nether: GOLD_INGOT
+    end: ENDER_PEARL
+    overworld: ECHO_SHARD
+
+# 400x400 kingdoms with a cage, throne, four towers and a key portal.
+kingdoms:
+  # Build the three kingdoms automatically when the server starts.
+  auto-build: true
+  # Footprint is size x size blocks (400 = 400x400).
+  size: 400
+  # Radius of the paved, cleared heart of the kingdom.
+  plaza-radius: 60
+  # Distance at which an invader wakes a sleeping boss.
+  wake-radius: 30
+  # Bosses go back to sleep after this many seconds without an invader nearby.
+  calm-radius: 40
+  # Columns of the kingdom placed each tick (1200 keeps a server responsive).
+  build-per-tick: 1200
+  # Optional maps/schematics pasted over the kingdom heart. Files live in
+  # plugins/DimensionWars/schematics/<name>.schem (bundled defaults are copied
+  # there on first start). Leave a dimension empty for the procedural build.
+  schematics:
+    enabled: true
+    # Blocks placed per tick while a map is pasted.
+    blocks-per-tick: 12000
+    # Place air too, so the map clears its own interior.
+    place-air: true
+    # How far the map sinks below the kingdom surface.
+    sink: 4
+    end: end
+    nether: ''
+    overworld: overworld
+
+bosses:
+  # Render the custom boss model from the resource pack instead of the vanilla mob.
+  custom-model: true
+  # Hide the vanilla mob underneath the custom model (recommended with the pack installed).
+  hide-vanilla-model: true
+  # Hitbox/model scale. 2.0 is roughly four blocks tall.
+  scale: 2.0
+  ritual:
+    # Seconds the revival ritual takes once the catalyst is crafted at the altar.
+    # 600 = 10 minutes.
+    duration-seconds: 600
+  nether:
+    max-health: 1000.0
+    damage: 8.0
+    armor: 20.0
+    knockback-resistance: 1.0
+    ability-range: 10.0
+    ability-chance-per-second: 0.35
+    fire-ticks: 120
+  end:
+    max-health: 1024.0
+    damage: 8.0
+    armor: 18.0
+    knockback-resistance: 0.9
+    ability-range: 11.0
+    ability-chance-per-second: 0.35
+  overworld:
+    max-health: 1024.0
+    damage: 8.0
+    armor: 22.0
+    knockback-resistance: 1.0
+    ability-range: 10.0
+    ability-chance-per-second: 0.35
+
+# Boss damage rules. All boss damage bypasses armour, enchantments and absorption.
+combat:
+  # Every boss melee hit: 2.0 = 1 heart.
+  normal-hit-damage: 2.0
+  # Every special ability hit: 7.0 damage.
+  special-damage: 7.0
+  # Every Nth special hit is empowered (double damage and effects).
+  specials-per-empowered: 3
+  # Ultimate attacks: 24.0 = 12 hearts.
+  ultimate-damage: 24.0
+  # The attack a boss unleashes as it dies, against the enemy team.
+  final-attack:
+    # 100 hearts = 200 damage.
+    hearts: 100.0
+    # Durability torn off every armour piece of every invader in range.
+    durability: 300
+    radius: 48.0
+
+# The custom netherite warblade (CustomModelData 4001). It works in every world as
+# long as the blade is in a hand or in the inventory.
+warblade:
+  right-click:
+    # Damage dealt by the sonic boom, in half-hearts (default 80 = 40 hearts).
+    damage: 80.0
+    cooldown-seconds: 12
+  left-click:
+    cooldown-seconds: 15
+
+# The pack is built into the jar: the plugin unzips it, hashes it and serves it over
+# HTTP, so players receive the boss/keys/sword models with no external web host.
+resource-pack:
+  enabled: true
+  self-host: true
+  port: 8123
+  # Public address players can reach. Leave empty to use http://<server-ip>:<port>/pack.zip.
+  public-url: ''
+  # Used instead of self-hosting when self-host is false.
+  url: ''
+  # Leave empty to use the hash of the pack the plugin hosts.
+  sha1: ''
+  forced: false
+  prompt: '&dInstall the Eclipse SMP pack to see the custom bosses, warblade and portal keys.'
+
+messages:
+  prefix: '&5[Eclipse SMP] '
+  info: '&dEclipse SMP &7| &cNether &f%nether%/%capacity% &7| &5End &f%end%/%capacity% &7| &bOverworld &f%overworld%/%capacity%'
+  no-permission: '&cYou do not have permission to do that.'
+  players-only: '&cThat command must be run by a player.'
+  player-not-found: '&cThat player is not online.'
+  spawn-not-set: '&cThe %dim% spawn has not been configured yet. Ask an admin to use /dw setspawn.'
+  spawn-saved: '&aSpawn saved for %dim%.'
+  altar-saved: '&aRitual altar saved for %dim% at %coords%.'
+  dimension-full: '&c%dim% is full (%capacity%/%capacity%). Choose another realm.'
+  dimension-filled: '&c%dim% filled up before your teleport finished.'
+  teleport-countdown: '&6Teleporting to %dim% in %seconds%s'
+  teleport-cancelled-moved: '&cTeleport cancelled: you moved.'
+  teleport-complete: '&aYou are now part of the %dim% dimension! Your choice is locked.'
+  choice-locked: '&cYour dimension has already been chosen and cannot be changed.'
+  own-boss-protected: '&cYou cannot damage your own dimension''s boss!'
+  boss-asleep-protected: '&7%boss% is asleep in its cage. Approach it to wake it.'
+  boss-awakened: '&6A dimension boss has awakened: %boss%'
+  boss-guard-wakes: '&c%boss% has awoken in the %dim%! Intruders: %player%.'
+  boss-guard-sleeps: '&7%boss% returned to its cage in the %dim% and fell asleep again.'
+  boss-tier: '&6%boss% has entered its &e%tier%&6 phase!'
+  boss-melee-hit: '&c%boss% hits you for &f2 hearts&c, straight through your armour.'
+  boss-final-attack: '&4&l%boss% unleashes its final attack! &c%hearts% hearts and %durability% durability to every invader nearby.'
+  boss-defeated: '&6%boss% has been defeated! The realm pays the price.'
+  boss-wipe: '&4%dim% is shattered: every %dim% player is slain and reduced to %hearts% hearts. A ritual is the only way back.'
+  boss-spawned: '&aSpawned the %dim% boss.'
+  boss-once: '&c%dim% can only summon its boss once. Its current state is %state% — revive it with the altar ritual.'
+  boss-heal-not-allowed: '&cOnly %dim% players can heal this boss.'
+  boss-heal-wrong-item: '&cHold %item% to heal this boss.'
+  boss-heal-cooldown: '&cBoss healing cooldown: %seconds%s.'
+  boss-full-health: '&eThat boss is already at full health.'
+  boss-healed: '&aBoss healed for %amount% health.'
+  ritual-code: '&dThe %dim% boss has fallen. Your ritual book is ready: code &f%code%&d. Altar: &f%coords%'
+  ritual-started: '&dThe %dim% revival ritual has begun at &f%coords%&d. All %dim% players now have &c%hearts% hearts&d.'
+  ritual-complete: '&dThe %dim% ritual is complete. The boss has returned, and every %dim% player now keeps &c%hearts% hearts&d forever.'
+  ritual-altar-broken: '&cThe %dim% ritual failed: the altar''s crafting table was destroyed.'
+  ritual-already: '&cA revival ritual is already in progress for %dim%.'
+  ritual-not-ready: '&cThe %dim% boss has not fallen, so no ritual is possible.'
+  ritual-wrong-place: '&cThe catalyst must be crafted at the %dim% altar. Place a crafting table on its pedestal first. Altar: %coords%'
+  redeem-usage: '&cUsage: /dw redeem <code>'
+  redeem-invalid: '&cThat ritual code is not active.'
+  redeem-coords: '&d%dim% ritual &7| &fAltar: &e%coords%&7 | &fCode: &e%code%'
+  assignment-reset: '&aReset the dimension assignment for %player%; they may choose again.'
+  menu-opened: '&aOpened the dimension menu for %player%.'
+  usage-setspawn: '&cUsage: /dw setspawn <nether|end|overworld>'
+  usage-setaltar: '&cUsage: /dw setaltar <nether|end|overworld>'
+  usage-boss: '&cUsage: /dw boss spawn <nether|end|overworld> | /dw boss reset [dimension]'
+  usage-boss-reset: '&cUsage: /dw boss reset [nether|end|overworld]'
+  usage-spawn: '&cUsage: /dw spawn boss <nether|end|overworld>'
+  boss-spawn-failed: '&cCould not spawn the %dim% boss here.'
+  boss-reset: '&aReset %count% boss(es): duplicates removed, the caged boss is back at full health and every player was healed.'
+  usage-ritual: '&cUsage: /dw ritual start <nether|end|overworld>'
+  usage-resetplayer: '&cUsage: /dw resetplayer <player>'
+  reloaded: '&aEclipse SMP configuration reloaded.'
+  dimension-invasion: '&c%s is invading %s!'
+  sword-no-dimension: '&cJoin a dimension before using the warblade.'
+  sword-cooldown: '&cWarblade on cooldown: %seconds%s.'
+  sword-sonic-totem: '&eSonic boom! Your totem popped but you survived at %hearts% hearts.'
+  sword-sonic-unarmed: '&cUnarmed! The sonic boom killed you. Respawn and grab a totem.'
+  sword-left-nether: '&eWarblade flare: a Nether flame burst.'
+  sword-left-end: '&5Warblade pulse: an End portal ripple.'
+  sword-left-overworld: '&bWarblade shriek: a Sculk echo.'
+  sword-shift-buff: '&dWarblade surge: &cStrength III&d and &bSpeed III&d for &e10s&d, &7Invisibility&d for &e8m&d.'
+  portal-own-dimension: '&cYou cannot open a portal to your own dimension. Travel to the other two realms.'
+  portal-no-anchor: '&cNo portal is built here to accept a key.'
+  portal-frame-far: '&cThat item frame is not part of the %dim% portal.'
+  portal-key-inserted: '&aInserted a %target% key (%count%/3) at the %source% portal.'
+  portal-lit: '&aThe %source% portal is lit and now leads to the %target%!'
+  portal-travel: '&dYou step through the %source% portal and arrive in the %target%.'
+  portal-invasion: '&c%player% used the %source% portal to invade the %target%!'
+  portal-no-ignite: '&cYou need a portal key, not flint and steel.'
+  key-no-dimension: '&cJoin a dimension first; keys only open portals to the other two realms.'
+  key-portal-list: '&eFrom the %dim% you can open portals to: &f%dests%&e. Craft a key with 2 Ominous Bottles, 5 realm blocks, a netherite ingot and a nether star, then insert 3 keys into your kingdom portal.'
+  usage-key: '&cUsage: /dw key portal [nether|end|overworld]'
+  usage-give-key: '&cUsage: /dw key portal <nether|end|overworld>'
+  give-key: '&aGiven 3 %dim% portal keys.'
+  give-key-full: '&cInventory full; the keys were dropped at your feet.'
+  warlord-sword: '&cThe Netherite Warblade has been placed in your inventory.'
+  warlord-given: '&aGave the Netherite Warblade to %player%.'
+  usage-warlord: '&cUsage: /dw warlord sword <player>'
+  usage-kingdom: '&cUsage: /dw kingdom <build|tp> <nether|end|overworld>'
+  kingdom-building: '&aBuilding the %dim%...'
+  kingdom-missing: '&cThat kingdom has not been built yet.'
+  kingdom-teleported: '&aWelcome to the %dim%.'
+  pack-sent: '&aResource pack offered. Server: &f%url%&a (sha1 %sha1%).'
+  give-table: '&aGiven a crafting table.'
+  give-table-full: '&cInventory full; the crafting table was dropped at your feet.'
+  usage-setportal: '&cUsage: /dw setportal <nether|end|overworld>'
+  portal-anchor-saved: '&aPortal anchor saved for %dim% at %coords%.'
+  reset-complete: '&aEclipse SMP fully reset: assignments, locks, teleports, books, boss/ritual state, kingdoms, spawns, altars and recipes cleared.'
+  usage:
+    - '&d/dw menu [player] &7- open the realm selector'
+    - '&d/dw info &7- show realm populations'
+    - '&d/dw key portal [dimension] &7- list reachable realms, or give 3 keys'
+    - '&d/dw warlord sword <player> &7- give the Netherite Warblade'
+    - '&d/dw kingdom <build|tp> <dimension> &7- build or visit a kingdom'
+    - '&d/dw setspawn <dimension> &7- save a territory spawn'
+    - '&d/dw setaltar <dimension> &7- save a ritual altar location'
+    - '&d/dw setportal <dimension> &7- save a portal anchor'
+    - '&d/dw boss spawn <dimension> &7- summon a boss'
+    - '&d/dw spawn boss <dimension> &7- spawn a boss at your position (no one-time rule)'
+    - '&d/dw boss reset [dimension] &7- remove duplicates, restore the caged boss, heal everyone'
+    - '&d/dw ritual start <dimension> &7- start a revival ritual'
+    - '&d/dw redeem <code> &7- look up an active ritual code'
+    - '&d/dw resetplayer <player> &7- clear an assignment and choice lock'
+    - '&d/dw give-key <dimension> &7- give 3 portal keys'
+    - '&d/dw give-table &7- give yourself a crafting table'
+    - '&d/dw pack &7- resend the resource pack'
+    - '&d/dw reset &7- full reset (admin only)'
+    - '&d/dw reload &7- reload config.yml'
