@@ -52,6 +52,7 @@ The resource pack is hosted by the plugin itself on port `8123` by default. Set
 | `/dw setspawn <dimension>` | Set a realm spawn |
 | `/dw setaltar <dimension>` | Set a revival altar |
 | `/dw setportal <dimension>` | Set a portal anchor |
+| `/dw boss list [dimension]` | Show each realm boss's state, tier, health, position and whether it is awake |
 | `/dw boss spawn <dimension>` | Spawn the boss once (caged/sleeping rules apply) |
 | `/dw spawn boss <dimension>` | Force-spawn the boss at your position, ignoring the once-only rule |
 | `/dw boss reset [dimension]` | Remove duplicates, restore the caged boss at full health and heal every player |
@@ -107,6 +108,13 @@ Pack assets are in `pack/` and are zipped/hosted by the plugin (`pack_format` 75
 1.21.11). Custom models: three portal keys, the Netherite Warblade, three ritual
 catalysts and nine boss models (easy/medium/hard per realm). `/dw pack` prints the
 hosted URL and SHA-1.
+
+Selection uses the 1.21.4+ item model definitions (`assets/minecraft/items/*.json`
+with `minecraft:range_dispatch` on `minecraft:custom_model_data`); the legacy
+`overrides` field no longer exists in 1.21.11. Boss models carry `fixed`/`gui`
+display transforms so the `ItemDisplay` figure stands on the ground at the right
+size. Run `python3 _tools/validate_pack.py` after editing the pack to re-check every
+model, texture, threshold and transform.
 
 ## Repository layout
 

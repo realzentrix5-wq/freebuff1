@@ -1436,6 +1436,8 @@ TabCompleter {
         LivingEntity boss;
         Entity entity = Bukkit.getEntity((UUID)state.entityId);
         if (entity == null) {
+            // The boss sleeps in an unloaded chunk. Keep its state (bar, tier, display)
+            // so it resumes when the chunk loads again instead of being forgotten.
             return;
         }
         if (!(entity instanceof LivingEntity) || !(boss = (LivingEntity)entity).isValid() || boss.isDead()) {
@@ -3384,6 +3386,44 @@ TabCompleter {
                 if (!this.requireAdmin(sender)) {
                     return true;
                 }
+                if (args.length >= 2 && args[1].equalsIgnoreCase("list")) {
+                    Dimension only = null;
+                    if (args.length > 2) {
+                        only = Dimension.parse(args[2]);
+                        if (only == null) {
+                            this.send(sender, this.prefixed("usage-boss-list", "&cUsage: /dw boss list [nether|end|overworld]", new Object[0]));
+                            return true;
+                        }
+                    }
+                    this.send(sender, this.prefixed("boss-list-header", "&6Boss status:", new Object[0]));
+                    Dimension[] listed = only == null ? Dimension.values() : new Dimension[]{only};
+                    for (Dimension target : listed) {
+                        BossState state = null;
+                        for (BossState candidate : this.bosses.values()) {
+                            if (candidate.dimension != target) continue;
+                            state = candidate;
+                            break;
+                        }
+                        LivingEntity entity = null;
+                        if (state != null) {
+                            Entity raw = Bukkit.getEntity(state.entityId);
+                            if (raw instanceof LivingEntity && !raw.isDead()) {
+                                entity = (LivingEntity)raw;
+                            }
+                        }
+                        Phase listedPhase = this.phases.getOrDefault((Object)target, Phase.DORMANT);
+                        if (entity == null) {
+                            if (state == null) {
+                                this.send(sender, this.message("boss-list-none", "&8- &7%dim%&8: &e%state% &8- &7no living boss", "%dim%", target.displayName, "%state%", listedPhase.name().toLowerCase(Locale.ROOT)));
+                            } else {
+                                this.send(sender, this.message("boss-list-unloaded", "&8- &7%dim%&8: &f%boss% &8| &7chunk not loaded &8| &f%coords% &8| &f%state%", "%dim%", target.displayName, "%boss%", this.bossNamePlain(target), "%coords%", this.coords(this.cages.get(target)), "%state%", state.awake ? "awake" : "asleep"));
+                            }
+                            continue;
+                        }
+                        this.send(sender, this.message("boss-list-line", "&8- &7%dim%&8: &f%boss% &7(%tier%) &8| &c%health%&7/&c%max%&7 HP &8| &f%coords% &8| &f%state%", "%dim%", target.displayName, "%boss%", this.bossNamePlain(target), "%tier%", state.tier.displayName(), "%health%", String.valueOf((int)Math.ceil(entity.getHealth())), "%max%", String.valueOf((int)Math.ceil(entity.getMaxHealth())), "%coords%", this.coords(entity.getLocation()), "%state%", state.awake ? "awake" : "asleep"));
+                    }
+                    return true;
+                }
                 if (args.length >= 2 && args[1].equalsIgnoreCase("reset")) {
                     Dimension only = null;
                     if (args.length > 2) {
@@ -3402,7 +3442,7 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 3 || !args[1].equalsIgnoreCase("spawn")) {
-                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /dw boss spawn <nether|end|overworld> | /dw boss reset [dimension]", new Object[0]));
+                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /dw boss list [dimension] | /dw boss spawn <nether|end|overworld> | /dw boss reset [dimension]", new Object[0]));
                     return true;
                 }
                 if (!(sender instanceof Player)) {
@@ -3775,7 +3815,12 @@ TabCompleter {
                 this.applyHearts(p, false);
             }
             for (BossState st : new ArrayList<BossState>(this.bosses.values())) {
-                if (Bukkit.getEntity((UUID)st.entityId) != null) continue;
+                Entity entity = Bukkit.getEntity((UUID)st.entityId);
+                if (entity == null) {
+                    // Unloaded with its chunk, not gone; tracking resumes on chunk load.
+                    continue;
+                }
+                if (entity.isValid() && !entity.isDead()) continue;
                 if (st.tracker != null) {
                     st.tracker.cancel();
                     st.tracker = null;
@@ -3797,7 +3842,7 @@ TabCompleter {
     private void sendUsage(CommandSender sender) {
         List<String> lines = this.getConfig().getStringList("messages.usage");
         if (lines.isEmpty()) {
-            lines = List.of("&d/dw menu [player] &7- open the dimension menu", "&d/dw info &7- show dimension populations", "&d/dw setspawn <dimension> &7- save a territory spawn", "&d/dw setaltar <dimension> &7- save a ritual altar location", "&d/dw boss spawn <dimension> &7- summon a boss (once per dimension)", "&d/dw spawn boss <dimension> &7- spawn a boss at your position", "&d/dw boss reset [dimension] &7- remove duplicates and restore the caged boss", "&d/dw ritual start <dimension> &7- start a revival ritual", "&d/dw redeem <code> &7- look up an active ritual code", "&d/dw resetplayer <player> &7- clear an assignment and choice lock", "&d/dw give-table &7- give yourself a crafting table", "&d/dw setportal <dimension> &7- set a portal anchor", "&d/dw key portal [dimension] &7- list or give portal keys", "&d/dw give-key <dimension> &7- give 3 portal keys", "&d/dw warlord sword <player> &7- give the Netherite Warblade", "&d/dw kingdom <build|tp> <dimension> &7- build or visit a kingdom", "&d/dw pack &7- resend the resource pack", "&d/dw reset &7- full reset (admin only)", "&d/dw reload &7- reload config.yml");
+            lines = List.of("&d/dw menu [player] &7- open the dimension menu", "&d/dw info &7- show dimension populations", "&d/dw setspawn <dimension> &7- save a territory spawn", "&d/dw setaltar <dimension> &7- save a ritual altar location", "&d/dw boss spawn <dimension> &7- summon a boss (once per dimension)", "&d/dw spawn boss <dimension> &7- spawn a boss at your position", "&d/dw boss reset [dimension] &7- remove duplicates and restore the caged boss", "&d/dw boss list [dimension] &7- show boss state, health and location", "&d/dw ritual start <dimension> &7- start a revival ritual", "&d/dw redeem <code> &7- look up an active ritual code", "&d/dw resetplayer <player> &7- clear an assignment and choice lock", "&d/dw give-table &7- give yourself a crafting table", "&d/dw setportal <dimension> &7- set a portal anchor", "&d/dw key portal [dimension] &7- list or give portal keys", "&d/dw give-key <dimension> &7- give 3 portal keys", "&d/dw warlord sword <player> &7- give the Netherite Warblade", "&d/dw kingdom <build|tp> <dimension> &7- build or visit a kingdom", "&d/dw pack &7- resend the resource pack", "&d/dw reset &7- full reset (admin only)", "&d/dw reload &7- reload config.yml");
         }
         for (String line : lines) {
             this.send(sender, (Component)LEGACY.deserialize(line));
