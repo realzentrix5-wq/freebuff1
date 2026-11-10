@@ -574,9 +574,9 @@ TabCompleter {
     private void openMenu(Player player) {
         Inventory inventory = Bukkit.createInventory(null, (int)27, (Component)MENU_TITLE);
         inventory.setItem(4, this.infoItem());
-        this.putDimension(inventory, 11, Dimension.NETHER, 3001, "&c&lNETHER REALM", player);
-        this.putDimension(inventory, 13, Dimension.END, 3002, "&5&lTHE END", player);
-        this.putDimension(inventory, 15, Dimension.OVERWORLD, 3003, "&b&lOVERWORLD", player);
+        this.putDimension(inventory, 11, Dimension.NETHER, 1001, "&c&lNETHER REALM", player);
+        this.putDimension(inventory, 13, Dimension.END, 1002, "&5&lTHE END", player);
+        this.putDimension(inventory, 15, Dimension.OVERWORLD, 1003, "&b&lOVERWORLD", player);
         player.openInventory(inventory);
     }
 

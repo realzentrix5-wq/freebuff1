@@ -78,32 +78,44 @@ for name in ('paper', 'netherite_ingot', 'nether_star', 'netherite_sword'):
     data.pop('overrides', None)
     write(path, data)
 
+# Minecraft's model loader rejects any element coordinate outside -16..32, so the
+# 64px-tall boss figures have to be normalised into that box before the client will
+# even parse them. Scaling the geometry by k and the display scale by 1/k keeps the
+# on-screen size: the figure stays 2.8 blocks tall and its feet stay on the ground.
+#
 # The client applies an item transform as translate(-0.5 blocks), rotate, scale,
 # translate (ItemTransform#apply), and the item display renderer spins the model 180
-# degrees around Y before drawing it. A 64px model therefore spans -0.5..3.5 blocks
-# before scaling, so these values stand it on the ground: rotation 180 cancels the
-# renderer's flip, scale 0.7 makes it 2.8 blocks tall, translation 6 units (0.375)
-# lifts the -0.35 block feet offset back to the ground.
-BOSS_DISPLAY = {
-    'gui_light': 'front',
-    'display': {
-        'gui': {
-            'rotation': [0, 0, 0],
-            'translation': [0, -6, 0],
-            'scale': [0.25, 0.25, 0.25],
+# degrees around Y before drawing it, so `fixed` uses rotation 180 to cancel the flip
+# and translation 8*scale to lift the normalised -0.5 block feet offset back to 0.
+MAX_COORD = 32.0
+BOSS_HEIGHT_BLOCKS = 2.8
+
+
+def boss_display(height_px, min_y_px):
+    fixed_scale = BOSS_HEIGHT_BLOCKS * 16.0 / height_px
+    gui_scale = 16.0 / height_px  # one inventory slot
+    centre_y = (min_y_px + height_px / 2.0) - 8.0
+    return {
+        'gui_light': 'front',
+        'display': {
+            'gui': {
+                'rotation': [0, 0, 0],
+                'translation': [0, round(8.0 - centre_y * gui_scale, 3), 0],
+                'scale': [round(gui_scale, 3)] * 3,
+            },
+            'ground': {
+                'rotation': [0, 0, 0],
+                'translation': [0, round(8.0 * gui_scale, 3), 0],
+                'scale': [round(gui_scale, 3)] * 3,
+            },
+            'fixed': {
+                'rotation': [0, 180, 0],
+                'translation': [0, round(8.0 * fixed_scale, 3), 0],
+                'scale': [round(fixed_scale, 3)] * 3,
+            },
         },
-        'ground': {
-            'rotation': [0, 0, 0],
-            'translation': [0, 2, 0],
-            'scale': [0.25, 0.25, 0.25],
-        },
-        'fixed': {
-            'rotation': [0, 180, 0],
-            'translation': [0, 6, 0],
-            'scale': [0.7, 0.7, 0.7],
-        },
-    },
-}
+    }
+
 
 boss_dir = os.path.join(PACK, 'assets/dimensionwars/models/item')
 for name in sorted(os.listdir(boss_dir)):
@@ -112,6 +124,19 @@ for name in sorted(os.listdir(boss_dir)):
     path = os.path.join(boss_dir, name)
     with open(path, encoding='utf-8') as handle:
         data = json.load(handle)
-    data.update(BOSS_DISPLAY)
+    elements = data.get('elements', [])
+    extent = max((abs(value) for element in elements
+                  for key in ('from', 'to') for value in element[key]), default=0.0)
+    factor = min(1.0, MAX_COORD / extent) if extent else 1.0
+    if factor < 1.0:
+        for element in elements:
+            element['from'] = [round(value * factor, 3) for value in element['from']]
+            element['to'] = [round(value * factor, 3) for value in element['to']]
+            if 'rotation' in element:
+                element['rotation']['origin'] = [round(value * factor, 3)
+                                                for value in element['rotation']['origin']]
+    ys = [value for element in elements for value in (element['from'][1], element['to'][1])]
+    height = (max(ys) - min(ys)) if ys else 16.0
+    data.update(boss_display(height, min(ys)))
     write(path, data)
-    print('updated', path)
+    print('updated %s (geometry scale %.3f, height %.1fpx)' % (path, factor, height))

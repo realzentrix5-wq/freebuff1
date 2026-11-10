@@ -17,7 +17,7 @@ from PIL import Image, ImageDraw
 
 PACK = 'pack'
 MODELS = os.path.join(PACK, 'assets/dimensionwars/models/item')
-TEXTURES = os.path.join(PACK, 'assets/dimensionwars/textures/entity')
+TEXTURES = os.path.join(PACK, 'assets/dimensionwars/textures/item')
 OUT = sys.argv[1] if len(sys.argv) > 1 else '/tmp/boss_previews'
 os.makedirs(OUT, exist_ok=True)
 

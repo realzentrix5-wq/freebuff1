@@ -102,9 +102,15 @@ def walk_model(name, path, seen):
     for key, texture in data.get('textures', {}).items():
         if texture.startswith('#'):
             continue
-        if texture in textures:
-            continue
-        if texture in VANILLA_TEXTURES:
+        if texture in textures or texture in VANILLA_TEXTURES:
+            # Only the atlas directories are stitched for item models. A texture in
+            # textures/entity (or anywhere else) resolves on disk but renders as the
+            # missing-texture checker in game.
+            namespace, _, sprite = texture.partition(':')
+            namespace = namespace if _ else 'minecraft'
+            if not sprite.startswith(('item/', 'block/')):
+                fail('%s texture %s is outside textures/item and textures/block, so '
+                     'the item atlas will not stitch it' % (path, texture))
             continue
         fail('%s references missing texture %s' % (path, texture))
     elements = data.get('elements', [])
@@ -245,6 +251,14 @@ for name, (path, data) in models.items():
     if fixed.get('rotation', [0, 0, 0])[1] % 360 != 180:
         fail('%s fixed rotation Y is %r; the display renderer spins 180 so this must be 180'
              % (path, fixed.get('rotation', [0, 0, 0])[1]))
+    # The vanilla model loader refuses any coordinate outside -16..32 and then drops
+    # the whole model, so the geometry has to be normalised before it is written.
+    for element in data.get('elements', []):
+        for key in ('from', 'to'):
+            for axis, value in enumerate(element.get(key, [])):
+                if not -16.0 <= value <= 32.0:
+                    fail('%s %s.%s=%s outside the client limit -16..32'
+                         % (path, key, 'xyz'[axis], value))
     ys = [v for element in data.get('elements', [])
           for v in (element.get('from', [0, 0, 0])[1], element.get('to', [0, 0, 0])[1])]
     if not ys:
