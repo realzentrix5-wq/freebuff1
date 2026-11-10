@@ -78,15 +78,18 @@ for name in ('paper', 'netherite_ingot', 'nether_star', 'netherite_sword'):
     data.pop('overrides', None)
     write(path, data)
 
-# The boss figure is drawn by an ItemDisplay using the item frame ("fixed") transform.
-# The display pivot is the centre of the model, so lift the 64px tall model by half its
-# scaled height to stand it on the ground, and shrink the GUI view to a single slot.
+# The client applies an item transform as translate(-0.5 blocks), rotate, scale,
+# translate (ItemTransform#apply), and the item display renderer spins the model 180
+# degrees around Y before drawing it. A 64px model therefore spans -0.5..3.5 blocks
+# before scaling, so these values stand it on the ground: rotation 180 cancels the
+# renderer's flip, scale 0.7 makes it 2.8 blocks tall, translation 6 units (0.375)
+# lifts the -0.35 block feet offset back to the ground.
 BOSS_DISPLAY = {
     'gui_light': 'front',
     'display': {
         'gui': {
             'rotation': [0, 0, 0],
-            'translation': [0, 0, 0],
+            'translation': [0, -6, 0],
             'scale': [0.25, 0.25, 0.25],
         },
         'ground': {
@@ -95,8 +98,8 @@ BOSS_DISPLAY = {
             'scale': [0.25, 0.25, 0.25],
         },
         'fixed': {
-            'rotation': [0, 0, 0],
-            'translation': [0, 22, 0],
+            'rotation': [0, 180, 0],
+            'translation': [0, 6, 0],
             'scale': [0.7, 0.7, 0.7],
         },
     },

@@ -1,5 +1,5 @@
 name: DimensionWars
-version: 2.2.0
+version: 2.3.0
 main: com.dimensionwars.DimensionWars
 api-version: '1.21'
 author: Eclipse SMP
@@ -8,7 +8,7 @@ website: https://papermc.io/
 commands:
   dw:
     description: Eclipse SMP player and administration commands
-    usage: "/dw <menu [player]|info|key portal [dimension]|warlord sword <player>|kingdom <build|tp> <dimension>|setspawn <dimension>|setaltar <dimension>|setportal <dimension>|boss list [dimension]|boss spawn <dimension>|boss reset [dimension]|spawn boss <dimension>|ritual start <dimension>|redeem <code>|give-key <dimension>|resetplayer <player>|give-table|pack|reset|reload>"
+    usage: "/dw <menu [player]|info|key portal [dimension]|warlord sword <player>|kingdom <build|tp> <dimension>|setspawn <dimension>|setaltar <dimension>|setportal <dimension>|boss list [dimension]|boss spawn <dimension>|boss reset [dimension]|boss heal [dimension]|boss kill [dimension]|spawn boss <dimension>|ritual start <dimension>|redeem <code>|give-key <dimension>|resetplayer <player>|give-table|pack|reset|reload>"
     aliases: [dimensionwars, eclipse]
 permissions:
   dimensionwars.admin:

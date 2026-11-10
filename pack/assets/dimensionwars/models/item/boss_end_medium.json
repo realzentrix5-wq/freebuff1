@@ -916,7 +916,7 @@
       ],
       "translation": [
         0,
-        0,
+        -6,
         0
       ],
       "scale": [
@@ -945,12 +945,12 @@
     "fixed": {
       "rotation": [
         0,
-        0,
+        180,
         0
       ],
       "translation": [
         0,
-        22,
+        6,
         0
       ],
       "scale": [

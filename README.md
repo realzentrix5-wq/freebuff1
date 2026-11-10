@@ -56,6 +56,8 @@ The resource pack is hosted by the plugin itself on port `8123` by default. Set
 | `/dw boss spawn <dimension>` | Spawn the boss once (caged/sleeping rules apply) |
 | `/dw spawn boss <dimension>` | Force-spawn the boss at your position, ignoring the once-only rule |
 | `/dw boss reset [dimension]` | Remove duplicates, restore the caged boss at full health and heal every player |
+| `/dw boss heal [dimension]` | Heal a realm boss back to full health (admin testing helper) |
+| `/dw boss kill [dimension]` | Kill a realm boss through the normal death path (admin testing helper) |
 | `/dw ritual start <dimension>` | Start a revival ritual |
 | `/dw redeem <code>` | Redeem a boss ritual code |
 | `/dw give-key <dimension>` | Give a portal key |
@@ -111,10 +113,15 @@ hosted URL and SHA-1.
 
 Selection uses the 1.21.4+ item model definitions (`assets/minecraft/items/*.json`
 with `minecraft:range_dispatch` on `minecraft:custom_model_data`); the legacy
-`overrides` field no longer exists in 1.21.11. Boss models carry `fixed`/`gui`
-display transforms so the `ItemDisplay` figure stands on the ground at the right
-size. Run `python3 _tools/validate_pack.py` after editing the pack to re-check every
-model, texture, threshold and transform.
+`overrides` field no longer exists in 1.21.11. Boss models carry `fixed`/`gui`/`ground`
+display transforms copied from the client's `ItemTransform` order, so the `ItemDisplay`
+figure stands on the ground at ~2.8 blocks and faces the same way as the boss.
+
+Run `python3 _tools/validate_pack.py` after editing the pack to re-check every model,
+texture, threshold, transform and texture UV. Pass a 1.21.11 `client.jar` to also
+validate the definitions against the official vanilla assets. `_tools/preview_boss.py`
+(needs Pillow) renders the boss models isometrically for a quick visual sanity check
+without launching the game.
 
 ## Repository layout
 

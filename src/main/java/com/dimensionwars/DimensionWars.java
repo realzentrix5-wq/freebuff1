@@ -616,8 +616,14 @@ TabCompleter {
         ItemStack item = new ItemStack(Material.BOOK);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.displayName((Component)LEGACY.deserialize("&eChoose your dimension"));
-            meta.lore(List.of(LEGACY.deserialize("&7Each realm holds up to &e" + this.capacity() + "&7 players."), LEGACY.deserialize("&7Teleport begins after a &e" + this.countdownSeconds() + "-second&7 countdown."), LEGACY.deserialize("&cThis choice is permanent."), Component.empty(), LEGACY.deserialize("&8Kingdoms: 400x400, one per dimension."), LEGACY.deserialize("&8Portal keys are crafted with 2 Ominous Bottles.")));
+            ArrayList<Component> lore = new ArrayList<Component>(List.of(LEGACY.deserialize("&7Each realm holds up to &e" + this.capacity() + "&7 players."), LEGACY.deserialize("&7Teleport begins after a &e" + this.countdownSeconds() + "-second&7 countdown."), LEGACY.deserialize("&cThis choice is permanent."), Component.empty(), LEGACY.deserialize("&6Bosses:")));
+            for (Dimension realm : Dimension.values()) {
+                lore.add(LEGACY.deserialize(this.bossSummary(realm)));
+            }
+            lore.add(Component.empty());
+            lore.add(LEGACY.deserialize("&8Kingdoms: 400x400, one per dimension."));
+            lore.add(LEGACY.deserialize("&8Portal keys are crafted with 2 Ominous Bottles."));
+            meta.lore(lore);
             item.setItemMeta(meta);
         }
         return item;
@@ -643,14 +649,50 @@ TabCompleter {
     }
 
     private String bossStatusLine(Dimension dimension) {
+        BossState state = this.stateFor(dimension);
+        LivingEntity entity = this.liveBoss(state);
+        if (entity != null) {
+            return "&7Boss: &c" + this.bossNamePlain(dimension) + " &7(" + state.tier.displayName() + ") &8| &c" + (int)Math.ceil(entity.getHealth()) + "&7/&c" + (int)Math.ceil(entity.getMaxHealth()) + " HP &8| " + (state.awake ? "&cawake" : "&7asleep");
+        }
+        if (state != null) {
+            return "&7Boss: &c" + this.bossNamePlain(dimension) + " &7(unloaded)";
+        }
+        return "&7Boss: " + this.bossPhaseText(dimension);
+    }
+
+    private String bossSummary(Dimension dimension) {
+        BossState state = this.stateFor(dimension);
+        LivingEntity entity = this.liveBoss(state);
+        String prefix = "&7" + dimension.displayName + "&8: ";
+        if (entity != null) {
+            return prefix + "&c" + this.bossNamePlain(dimension) + " &7(" + state.tier.displayName() + ") &c" + (int)Math.ceil(entity.getHealth()) + "&7/&c" + (int)Math.ceil(entity.getMaxHealth()) + " HP";
+        }
+        if (state != null) {
+            return prefix + "&c" + this.bossNamePlain(dimension) + " &7(unloaded)";
+        }
+        return prefix + this.bossPhaseText(dimension);
+    }
+
+    private String bossPhaseText(Dimension dimension) {
         return switch (this.phases.getOrDefault((Object)dimension, Phase.DORMANT).ordinal()) {
             default -> throw new MatchException(null, null);
-            case 0 -> "&7Boss: &eDormant";
-            case 1 -> "&7Boss: &cAlive";
-            case 2 -> "&7Boss: &4Slain &7\u2014 ritual needed";
-            case 3 -> "&7Boss: &dRitual in progress";
-            case 4 -> "&7Boss: &6Revived";
+            case 0 -> "&eDormant";
+            case 1 -> "&cAlive";
+            case 2 -> "&4Slain &7\u2014 ritual needed";
+            case 3 -> "&dRitual in progress";
+            case 4 -> "&6Revived";
         };
+    }
+
+    private LivingEntity liveBoss(BossState state) {
+        if (state == null) {
+            return null;
+        }
+        Entity entity = Bukkit.getEntity((UUID)state.entityId);
+        if (entity instanceof LivingEntity && !entity.isDead()) {
+            return (LivingEntity)entity;
+        }
+        return null;
     }
 
     private boolean isAssignedTo(Dimension dimension, UUID playerId) {
@@ -3424,6 +3466,33 @@ TabCompleter {
                     }
                     return true;
                 }
+                if (args.length >= 2 && (args[1].equalsIgnoreCase("heal") || args[1].equalsIgnoreCase("kill"))) {
+                    boolean kill = args[1].equalsIgnoreCase("kill");
+                    String action = kill ? "kill" : "heal";
+                    Dimension only = null;
+                    if (args.length > 2) {
+                        only = Dimension.parse(args[2]);
+                        if (only == null) {
+                            this.send(sender, this.prefixed("usage-boss-" + action, "&cUsage: /dw boss " + action + " [nether|end|overworld]", new Object[0]));
+                            return true;
+                        }
+                    }
+                    for (Dimension target : only == null ? Dimension.values() : new Dimension[]{only}) {
+                        LivingEntity entity = this.liveBoss(this.stateFor(target));
+                        if (entity == null) {
+                            this.send(sender, this.message("boss-admin-none", "&7%dim%&8: &e%state%&8 - &7no loaded boss to %action%.", "%dim%", target.displayName, "%state%", this.bossPhaseText(target), "%action%", action));
+                            continue;
+                        }
+                        if (kill) {
+                            entity.setHealth(0.0);
+                            this.send(sender, this.message("boss-admin-kill", "&cKilled %dim% boss (%boss%).", "%dim%", target.displayName, "%boss%", this.bossNamePlain(target)));
+                        } else {
+                            entity.setHealth(entity.getMaxHealth());
+                            this.send(sender, this.message("boss-admin-heal", "&aHealed %dim% boss (%boss%) to &c%hp%&a HP.", "%dim%", target.displayName, "%boss%", this.bossNamePlain(target), "%hp%", String.valueOf((int)Math.ceil(entity.getMaxHealth()))));
+                        }
+                    }
+                    return true;
+                }
                 if (args.length >= 2 && args[1].equalsIgnoreCase("reset")) {
                     Dimension only = null;
                     if (args.length > 2) {
@@ -3442,7 +3511,7 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 3 || !args[1].equalsIgnoreCase("spawn")) {
-                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /dw boss list [dimension] | /dw boss spawn <nether|end|overworld> | /dw boss reset [dimension]", new Object[0]));
+                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /dw boss list [dimension] | /dw boss spawn <nether|end|overworld> | /dw boss reset [dimension] | /dw boss heal [dimension] | /dw boss kill [dimension]", new Object[0]));
                     return true;
                 }
                 if (!(sender instanceof Player)) {
@@ -3842,7 +3911,7 @@ TabCompleter {
     private void sendUsage(CommandSender sender) {
         List<String> lines = this.getConfig().getStringList("messages.usage");
         if (lines.isEmpty()) {
-            lines = List.of("&d/dw menu [player] &7- open the dimension menu", "&d/dw info &7- show dimension populations", "&d/dw setspawn <dimension> &7- save a territory spawn", "&d/dw setaltar <dimension> &7- save a ritual altar location", "&d/dw boss spawn <dimension> &7- summon a boss (once per dimension)", "&d/dw spawn boss <dimension> &7- spawn a boss at your position", "&d/dw boss reset [dimension] &7- remove duplicates and restore the caged boss", "&d/dw boss list [dimension] &7- show boss state, health and location", "&d/dw ritual start <dimension> &7- start a revival ritual", "&d/dw redeem <code> &7- look up an active ritual code", "&d/dw resetplayer <player> &7- clear an assignment and choice lock", "&d/dw give-table &7- give yourself a crafting table", "&d/dw setportal <dimension> &7- set a portal anchor", "&d/dw key portal [dimension] &7- list or give portal keys", "&d/dw give-key <dimension> &7- give 3 portal keys", "&d/dw warlord sword <player> &7- give the Netherite Warblade", "&d/dw kingdom <build|tp> <dimension> &7- build or visit a kingdom", "&d/dw pack &7- resend the resource pack", "&d/dw reset &7- full reset (admin only)", "&d/dw reload &7- reload config.yml");
+            lines = List.of("&d/dw menu [player] &7- open the dimension menu", "&d/dw info &7- show dimension populations", "&d/dw setspawn <dimension> &7- save a territory spawn", "&d/dw setaltar <dimension> &7- save a ritual altar location", "&d/dw boss spawn <dimension> &7- summon a boss (once per dimension)", "&d/dw spawn boss <dimension> &7- spawn a boss at your position", "&d/dw boss reset [dimension] &7- remove duplicates and restore the caged boss", "&d/dw boss list [dimension] &7- show boss state, health and location", "&d/dw boss heal [dimension] &7- heal a realm boss to full", "&d/dw boss kill [dimension] &7- kill a realm boss (testing)", "&d/dw ritual start <dimension> &7- start a revival ritual", "&d/dw redeem <code> &7- look up an active ritual code", "&d/dw resetplayer <player> &7- clear an assignment and choice lock", "&d/dw give-table &7- give yourself a crafting table", "&d/dw setportal <dimension> &7- set a portal anchor", "&d/dw key portal [dimension] &7- list or give portal keys", "&d/dw give-key <dimension> &7- give 3 portal keys", "&d/dw warlord sword <player> &7- give the Netherite Warblade", "&d/dw kingdom <build|tp> <dimension> &7- build or visit a kingdom", "&d/dw pack &7- resend the resource pack", "&d/dw reset &7- full reset (admin only)", "&d/dw reload &7- reload config.yml");
         }
         for (String line : lines) {
             this.send(sender, (Component)LEGACY.deserialize(line));

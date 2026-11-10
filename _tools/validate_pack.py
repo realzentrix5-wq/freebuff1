@@ -7,9 +7,12 @@ plugin. Exits non-zero on the first failed check set.
 import json
 import os
 import sys
+import zipfile
 
 PACK = 'pack'
 FORMAT = 75
+# Pass the official 1.21.11 client jar to also check vanilla fallbacks and assets.
+CLIENT_JAR = sys.argv[1] if len(sys.argv) > 1 else None
 VANILLA_MODELS = {'minecraft:item/generated', 'minecraft:item/handheld'}
 # Vanilla sprite/model references the pack intentionally inherits.
 VANILLA_TEXTURES = {
@@ -213,6 +216,81 @@ EXPECTED = {
         4001: 'dimensionwars:item/sword_netherite',
     },
 }
+
+# ------------------------------------------------------- model geometry sanity
+# Large boss models are drawn by an ItemDisplay in FIXED mode. Their faces must sit
+# inside the texture, and the display transform must stand them on the ground at a
+# sensible height instead of burying or floating them.
+for name, (path, data) in models.items():
+    if not name.startswith('dimensionwars:item/boss_'):
+        continue
+    size = data.get('texture_size')
+    if not size and data.get('parent') in models:
+        size = models[data['parent']][1].get('texture_size')
+    if size:
+        for element in data.get('elements', []):
+            for face_name, face in element.get('faces', {}).items():
+                uv = face.get('uv')
+                if not uv:
+                    continue
+                if uv[0] < 0 or uv[1] < 0 or uv[2] > size[0] or uv[3] > size[1]:
+                    fail('%s face %s UV %r outside texture %r' % (path, face_name, uv, size))
+    fixed = data.get('display', {}).get('fixed')
+    if not fixed:
+        fail('%s has no fixed display transform' % path)
+        continue
+    # ItemTransform#apply: point -> (point - 8) * scale + translation (translation in
+    # 1/16 blocks), and the display renderer adds its own 180 degree Y spin, which the
+    # model's fixed rotation must cancel so the figure faces where the boss faces.
+    if fixed.get('rotation', [0, 0, 0])[1] % 360 != 180:
+        fail('%s fixed rotation Y is %r; the display renderer spins 180 so this must be 180'
+             % (path, fixed.get('rotation', [0, 0, 0])[1]))
+    ys = [v for element in data.get('elements', [])
+          for v in (element.get('from', [0, 0, 0])[1], element.get('to', [0, 0, 0])[1])]
+    if not ys:
+        fail('%s has no geometry' % path)
+        continue
+    scale = fixed.get('scale', [1, 1, 1])[1]
+    lift = fixed.get('translation', [0, 0, 0])[1]
+    bottom = (min(ys) - 8.0) * scale / 16.0 + lift / 16.0
+    top = (max(ys) - 8.0) * scale / 16.0 + lift / 16.0
+    if abs(bottom) > 0.12:
+        fail('%s feet at %+.2f blocks, expected the ground (fixed translation/scale)'
+             % (path, bottom))
+    if not 2.0 <= top <= 3.4:
+        fail('%s is %.2f blocks tall when displayed, expected a boss-sized 2-3.4'
+             % (path, top))
+
+# ------------------------------------------------------- official client check
+if CLIENT_JAR:
+    try:
+        jar = zipfile.ZipFile(CLIENT_JAR)
+    except OSError as error:
+        fail('cannot open client jar: %s' % error)
+        jar = None
+    if jar:
+        names = set(jar.namelist())
+        version = json.loads(jar.read('version.json'))
+        pack_version = version.get('pack_version', {})
+        major = pack_version.get('resource_major', pack_version.get('resource'))
+        minor = pack_version.get('resource_minor', 0)
+        client_format = '%s.%s' % (major, minor)
+        if major is not None and int(major) != FORMAT:
+            fail('client jar is pack format %s, validator expects %d'
+                 % (client_format, FORMAT))
+        for item, routes in EXPECTED.items():
+            vanilla_path = 'assets/minecraft/items/%s.json' % item.split(':', 1)[1]
+            if vanilla_path not in names:
+                fail('client jar has no %s, cannot verify the override path' % vanilla_path)
+        for fallback in {route.get('model') for item in EXPECTED
+                         for route in [items[item]['model'].get('fallback', {})]}:
+            if not fallback or not fallback.startswith('minecraft:'):
+                continue
+            vanilla_model = 'assets/minecraft/models/%s.json' % fallback.split(':', 1)[1]
+            if vanilla_model not in names:
+                fail('vanilla fallback model %s does not exist in the client jar'
+                     % fallback)
+        print('checked against client jar (resource pack format %s)' % client_format)
 
 for item, routes in EXPECTED.items():
     definition = items.get(item)
