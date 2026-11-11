@@ -1,12 +1,12 @@
 {
-  "credit": "DimensionWars",
+  "credit": "EclipseSMP",
   "texture_size": [
     128,
     128
   ],
   "textures": {
-    "0": "dimensionwars:item/boss_nether_medium",
-    "particle": "dimensionwars:item/boss_nether_medium"
+    "0": "eclipsesmp:item/boss_nether_hard",
+    "particle": "eclipsesmp:item/boss_nether_hard"
   },
   "elements": [
     {

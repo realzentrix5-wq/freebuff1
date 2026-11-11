@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "dimensionwars:item/sword_netherite"
+    "layer0": "eclipsesmp:item/sword_netherite"
   }
 }

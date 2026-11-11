@@ -1,4 +1,4 @@
-# Eclipse SMP — DimensionWars
+# Eclipse SMP v1
 
 Paper **1.21.11** plugin (Java 21) that turns a server into three competing realms.
 
@@ -26,15 +26,15 @@ Paper **1.21.11** plugin (Java 21) that turns a server into three competing real
 mvn package
 ```
 
-The plugin jar is written to `target/DimensionWars.jar`.
+The plugin jar is written to `target/EclipseSMP.jar`.
 
 ## Install
 
-1. Build the jar (or copy `target/DimensionWars.jar`).
+1. Build the jar (or copy `target/EclipseSMP.jar`).
 2. Drop it into the server's `plugins/` folder.
 3. Restart the server. Kingdoms are chosen near each world's spawn and built
    automatically; watch the console for "Kingdom is ready".
-4. Players get the realm selector on join. Admins can use `/dw`.
+4. Players get the realm selector on join. Admins can use `/esmp`.
 
 The resource pack is hosted by the plugin itself on port `8123` by default. Set
 `resource-pack.public-url` to the address players can reach (for example
@@ -44,30 +44,30 @@ The resource pack is hosted by the plugin itself on port `8123` by default. Set
 
 | Command | Description |
 | --- | --- |
-| `/dw menu [player]` | Open the realm selector |
-| `/dw info` | Player counts per realm |
-| `/dw key portal [dimension]` | Show which realms a portal can reach |
-| `/dw kingdom build <dimension>` | Rebuild a kingdom (procedural + schematic) |
-| `/dw kingdom tp <dimension>` | Teleport to a kingdom spawn |
-| `/dw setspawn <dimension>` | Set a realm spawn |
-| `/dw setaltar <dimension>` | Set a revival altar |
-| `/dw setportal <dimension>` | Set a portal anchor |
-| `/dw boss list [dimension]` | Show each realm boss's state, tier, health, position and whether it is awake |
-| `/dw boss spawn <dimension>` | Spawn the boss once (caged/sleeping rules apply) |
-| `/dw spawn boss <dimension>` | Force-spawn the boss at your position, ignoring the once-only rule |
-| `/dw boss reset [dimension]` | Remove duplicates, restore the caged boss at full health and heal every player |
-| `/dw boss heal [dimension]` | Heal a realm boss back to full health (admin testing helper) |
-| `/dw boss kill [dimension]` | Kill a realm boss through the normal death path (admin testing helper) |
-| `/dw ritual start <dimension>` | Start a revival ritual |
-| `/dw redeem <code>` | Redeem a boss ritual code |
-| `/dw give-key <dimension>` | Give a portal key |
-| `/dw resetplayer <player>` | Reset a player's realm data |
-| `/dw give-table` | Give the guide book |
-| `/dw pack` | Re-send the resource pack |
-| `/dw reset` | Reset all plugin data |
-| `/dw reload` | Reload `config.yml` |
+| `/esmp menu [player]` | Open the realm selector |
+| `/esmp info` | Player counts per realm |
+| `/esmp key portal [dimension]` | Show which realms a portal can reach |
+| `/esmp kingdom build <dimension>` | Rebuild a kingdom (procedural + schematic) |
+| `/esmp kingdom tp <dimension>` | Teleport to a kingdom spawn |
+| `/esmp setspawn <dimension>` | Set a realm spawn |
+| `/esmp setaltar <dimension>` | Set a revival altar |
+| `/esmp setportal <dimension>` | Set a portal anchor |
+| `/esmp boss list [dimension]` | Show each realm boss's state, tier, health, position and whether it is awake |
+| `/esmp boss spawn <dimension>` | Spawn the boss once (caged/sleeping rules apply) |
+| `/esmp spawn boss <dimension>` | Force-spawn the boss at your position, ignoring the once-only rule |
+| `/esmp boss reset [dimension]` | Remove duplicates, restore the caged boss at full health and heal every player |
+| `/esmp boss heal [dimension]` | Heal a realm boss back to full health (admin testing helper) |
+| `/esmp boss kill [dimension]` | Kill a realm boss through the normal death path (admin testing helper) |
+| `/esmp ritual start <dimension>` | Start a revival ritual |
+| `/esmp redeem <code>` | Redeem a boss ritual code |
+| `/esmp give-key <dimension>` | Give a portal key |
+| `/esmp resetplayer <player>` | Reset a player's realm data |
+| `/esmp give-table` | Give the guide book |
+| `/esmp pack` | Re-send the resource pack |
+| `/esmp reset` | Reset all plugin data |
+| `/esmp reload` | Reload `config.yml` |
 
-Permissions: `dimensionwars.admin` (op), `dimensionwars.menu`, `dimensionwars.info`.
+Permissions: `eclipsesmp.admin` (op), `eclipsesmp.menu`, `eclipsesmp.info`.
 
 ## Key recipe
 
@@ -85,7 +85,7 @@ resource pack overrides.
 
 ## Kingdom maps
 
-Schematics live in `plugins/DimensionWars/schematics/` (bundled copies are extracted
+Schematics live in `plugins/EclipseSMP/schematics/` (bundled copies are extracted
 on first use) and are configured in `config.yml`:
 
 ```yaml
@@ -108,7 +108,7 @@ generated asynchronously before building, which keeps the server tick stable.
 
 Pack assets are in `pack/` and are zipped/hosted by the plugin (`pack_format` 75 for
 1.21.11). Custom models: three portal keys, the Netherite Warblade, three ritual
-catalysts and nine boss models (easy/medium/hard per realm). `/dw pack` prints the
+catalysts and nine boss models (easy/medium/hard per realm). `/esmp pack` prints the
 hosted URL and SHA-1.
 
 Selection uses the 1.21.4+ item model definitions (`assets/minecraft/items/*.json`
@@ -128,8 +128,8 @@ without launching the game.
 ```
 pom.xml
 pack/                                   resource pack assets
-src/main/java/com/dimensionwars/
-  DimensionWars.java                    plugin: commands, kingdoms, bosses, portals, pack host
+src/main/java/com/eclipsesmp/
+  EclipseSMP.java                    plugin: commands, kingdoms, bosses, portals, pack host
   SchematicPaster.java                  Sponge schematic reader and sliced paster
 src/main/resources/
   config.yml, plugin.yml

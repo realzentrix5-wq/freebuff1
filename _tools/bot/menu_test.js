@@ -30,7 +30,7 @@ function describe(item) {
 
 bot.on('spawn', () => {
   console.log('SPAWN', JSON.stringify(bot.entity.position));
-  setTimeout(() => bot.chat('/dw menu'), 3000);
+  setTimeout(() => bot.chat('/esmp menu'), 3000);
 });
 
 bot.on('windowOpen', (window) => {

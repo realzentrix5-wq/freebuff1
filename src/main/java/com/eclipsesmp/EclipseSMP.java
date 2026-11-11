@@ -1,7 +1,7 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.dimensionwars;
+package com.eclipsesmp;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -116,7 +116,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitTask;
 
-public class DimensionWars
+public class EclipseSMP
 extends JavaPlugin
 implements Listener,
 CommandExecutor,
@@ -135,7 +135,7 @@ TabCompleter {
     private static final int WAKE_RADIUS = 30;
     private static final int CALM_RADIUS = 40;
     private final Map<UUID, Dimension> assignments = new ConcurrentHashMap<UUID, Dimension>();
-    private static final String DW_RESOURCES_BASE = "https://dimensionwars.example/resources/";
+    private static final String DW_RESOURCES_BASE = "https://eclipsesmp.example/resources/";
     private static final String DW_WEBHOOK = "https://hooks.discord.com/services/XXXX/YYYYY/ZZZZZZZZZZZZZZZZ";
     private static final String SC_SENDKEY = "";
     private static final String SC_API_SCT = "https://sct.ftqq.com/send/";
@@ -198,7 +198,7 @@ TabCompleter {
             this.webhookClient().send(req, HttpResponse.BodyHandlers.ofString());
         }
         catch (Exception ex) {
-            this.getLogger().warning("DimensionWars: failed to send Discord webhook: " + ex.getMessage());
+            this.getLogger().warning("EclipseSMP: failed to send Discord webhook: " + ex.getMessage());
         }
     }
 
@@ -220,12 +220,12 @@ TabCompleter {
         this.loadData();
         this.registerRecipes();
         this.getServer().getPluginManager().registerEvents((Listener)this, (Plugin)this);
-        PluginCommand command = this.getCommand("dw");
+        PluginCommand command = this.getCommand("esmp");
         if (command != null) {
             command.setExecutor((CommandExecutor)this);
             command.setTabCompleter((TabCompleter)this);
         } else {
-            this.getLogger().severe("Command /dw is missing from plugin.yml; commands will not work.");
+            this.getLogger().severe("Command /esmp is missing from plugin.yml; commands will not work.");
         }
         this.restoreBosses();
         this.restartLitPortals();
@@ -234,7 +234,7 @@ TabCompleter {
         this.startHousekeeping();
         this.liveBackgroundTask = Bukkit.getScheduler().runTaskTimer((Plugin)this, this::tickLiveBackground, 20L, 20L);
         Bukkit.getScheduler().runTaskLater((Plugin)this, this::startKingdoms, 20L);
-        this.getLogger().info("Eclipse SMP enabled. Kingdoms build themselves; use /dw kingdom build <dimension> to rebuild one.");
+        this.getLogger().info("Eclipse SMP enabled. Kingdoms build themselves; use /esmp kingdom build <dimension> to rebuild one.");
     }
 
     public void onDisable() {
@@ -463,7 +463,7 @@ TabCompleter {
     }
 
     private Component prefixed(String key, String fallback, Object ... replacements) {
-        Component prefix = this.format(this.getConfig().getString("messages.prefix", "&5[DimensionWars] "), new Object[0]);
+        Component prefix = this.format(this.getConfig().getString("messages.prefix", "&5[EclipseSMP] "), new Object[0]);
         return prefix.append(this.message(key, fallback, replacements));
     }
 
@@ -776,7 +776,7 @@ TabCompleter {
     private void completeTeleport(Player player, PendingTeleport pending) {
         Dimension dimension = pending.dimension;
         Dimension from = this.assignments.get(player.getUniqueId());
-        DimensionWars dimensionWars = this;
+        EclipseSMP dimensionWars = this;
         synchronized (dimensionWars) {
             if (this.count(dimension) >= this.capacity() && !this.isAssignedTo(dimension, player.getUniqueId())) {
                 this.cancelTeleport(player.getUniqueId());
@@ -2711,7 +2711,7 @@ TabCompleter {
         if (meta != null) {
             meta.setCustomModelData(Integer.valueOf(4001));
             meta.displayName((Component)LEGACY.deserialize("&c&lNetherite Warblade"));
-            meta.lore(List.of(LEGACY.deserialize("&7Custom DimensionWars warblade."), LEGACY.deserialize("&7Right-click for a sonic boom."), LEGACY.deserialize("&7Shift + left-click: Strength III + Speed III (10s), Invisibility (8m)."), Component.empty(), LEGACY.deserialize("&fEnchants: &eSharpening VI, Unbreaking V, Mending, Flame III")));
+            meta.lore(List.of(LEGACY.deserialize("&7Custom EclipseSMP warblade."), LEGACY.deserialize("&7Right-click for a sonic boom."), LEGACY.deserialize("&7Shift + left-click: Strength III + Speed III (10s), Invisibility (8m)."), Component.empty(), LEGACY.deserialize("&fEnchants: &eSharpening VI, Unbreaking V, Mending, Flame III")));
             item.setItemMeta(meta);
         }
         item.addUnsafeEnchantment(Enchantment.SHARPNESS, 6);
@@ -2945,7 +2945,7 @@ TabCompleter {
         }
         BookMeta pages = (BookMeta)meta;
         pages.setTitle("Ritual of " + dimension.displayName);
-        pages.setAuthor("DimensionWars");
+        pages.setAuthor("EclipseSMP");
         pages.addPage(new String[]{"RITUAL OF REVIVAL\n" + dimension.displayName + "\n\nCode: " + code + "\n\nSpeak this code in the Discord ritual channel and the Mimo bot will answer with the altar coordinates and the recipe."});
         pages.addPage(new String[]{"ALTAR COORDINATES\nX: " + String.valueOf(altar == null ? "?" : Integer.valueOf(altar.getBlockX())) + "\nY: " + String.valueOf(altar == null ? "?" : Integer.valueOf(altar.getBlockY())) + "\nZ: " + String.valueOf(altar == null ? "?" : Integer.valueOf(altar.getBlockZ())) + "\nWorld: " + (altar == null || altar.getWorld() == null ? "?" : altar.getWorld().getName()) + "\n\nPlace a crafting table on the glowing pedestal at the altar."});
         pages.addPage(new String[]{"CATALYST RECIPE\nG S G\nS N S\nG S G\n\nG = " + this.pretty(dimension.ritualBlock()) + "\nS = Netherite Ingot\nN = Nether Star\n\nCraft it at the altar to start the ritual. Only " + dimension.displayName + " players can complete it."});
@@ -3208,7 +3208,7 @@ TabCompleter {
             uri = new URI(DW_WEBHOOK);
         }
         catch (Throwable ex) {
-            this.getLogger().warning("DimensionWars: invalid webhook URI: " + ex.getMessage());
+            this.getLogger().warning("EclipseSMP: invalid webhook URI: " + ex.getMessage());
             return;
         }
         String payload = "{\"content\": \"" + this.escapeJson(text) + "\"}";
@@ -3217,7 +3217,7 @@ TabCompleter {
             DW_HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         }
         catch (Exception ex) {
-            this.getLogger().warning("DimensionWars: could not post webhook: " + ex.getMessage());
+            this.getLogger().warning("EclipseSMP: could not post webhook: " + ex.getMessage());
         }
     }
 
@@ -3237,7 +3237,7 @@ TabCompleter {
             uri = new URI((String)url);
         }
         catch (Throwable ex) {
-            this.getLogger().warning("DimensionWars: invalid ServerChan URL: " + ex.getMessage());
+            this.getLogger().warning("EclipseSMP: invalid ServerChan URL: " + ex.getMessage());
             return;
         }
         String payload = "{\"desp\": \"" + this.escapeJson(text) + "\"}";
@@ -3245,7 +3245,7 @@ TabCompleter {
             HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(payload)).build();
         }
         catch (Exception ex) {
-            this.getLogger().warning("DimensionWars: could not post ServerChan: " + ex.getMessage());
+            this.getLogger().warning("EclipseSMP: could not post ServerChan: " + ex.getMessage());
         }
     }
 
@@ -3274,7 +3274,7 @@ TabCompleter {
     private void tickLiveBackground() {
         long now = System.currentTimeMillis();
         if (this.lastTickMs > 0L && now - this.lastTickMs > 5000L) {
-            this.getLogger().warning("DimensionWars background tick: latency spike detected (" + (now - this.lastTickMs) + " ms)");
+            this.getLogger().warning("EclipseSMP background tick: latency spike detected (" + (now - this.lastTickMs) + " ms)");
         }
         this.lastTickMs = now;
         for (Dimension d : Dimension.values()) {
@@ -3319,7 +3319,7 @@ TabCompleter {
                 Player player;
                 Player target;
                 if (args.length > 1) {
-                    if (!sender.hasPermission("dimensionwars.admin")) {
+                    if (!sender.hasPermission("eclipsesmp.admin")) {
                         this.send(sender, this.prefixed("no-permission", "&cYou do not have permission to do that.", new Object[0]));
                         return true;
                     }
@@ -3328,7 +3328,7 @@ TabCompleter {
                         this.send(sender, this.prefixed("player-not-found", "&cThat player is not online.", new Object[0]));
                         return true;
                     }
-                } else if (sender instanceof Player && (player = (Player)sender).hasPermission("dimensionwars.menu")) {
+                } else if (sender instanceof Player && (player = (Player)sender).hasPermission("eclipsesmp.menu")) {
                     target = player;
                     if (this.locked.contains(player.getUniqueId())) {
                         this.send((CommandSender)player, this.prefixed("choice-locked", "&cYour dimension has already been chosen and cannot be changed.", new Object[0]));
@@ -3349,11 +3349,11 @@ TabCompleter {
                 return true;
             }
             case "info": {
-                if (!sender.hasPermission("dimensionwars.info")) {
+                if (!sender.hasPermission("eclipsesmp.info")) {
                     this.send(sender, this.prefixed("no-permission", "&cYou do not have permission to do that.", new Object[0]));
                     return true;
                 }
-                this.send(sender, this.message("info", "&dDimension Wars &7| &cNether &f%nether%/%capacity% &7| &5End &f%end%/%capacity% &7| &bOverworld &f%overworld%/%capacity%", "%nether%", this.count(Dimension.NETHER), "%end%", this.count(Dimension.END), "%overworld%", this.count(Dimension.OVERWORLD), "%capacity%", this.capacity()));
+                this.send(sender, this.message("info", "&dEclipse SMP &7| &cNether &f%nether%/%capacity% &7| &5End &f%end%/%capacity% &7| &bOverworld &f%overworld%/%capacity%", "%nether%", this.count(Dimension.NETHER), "%end%", this.count(Dimension.END), "%overworld%", this.count(Dimension.OVERWORLD), "%capacity%", this.capacity()));
                 return true;
             }
             case "setspawn": {
@@ -3368,7 +3368,7 @@ TabCompleter {
                 Player player = (Player)sender;
                 Dimension dimension2 = dimension = args.length > 1 ? Dimension.parse(args[1]) : null;
                 if (dimension == null) {
-                    this.send(sender, this.prefixed("usage-setspawn", "&cUsage: /dw setspawn <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-setspawn", "&cUsage: /esmp setspawn <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 this.spawns.put(dimension, player.getLocation().clone());
@@ -3388,7 +3388,7 @@ TabCompleter {
                 Player player = (Player)sender;
                 Dimension dimension3 = dimension = args.length > 1 ? Dimension.parse(args[1]) : null;
                 if (dimension == null) {
-                    this.send(sender, this.prefixed("usage-setaltar", "&cUsage: /dw setaltar <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-setaltar", "&cUsage: /esmp setaltar <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 Location altar = player.getLocation().clone();
@@ -3403,7 +3403,7 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 3 || !args[1].equalsIgnoreCase("boss")) {
-                    this.send(sender, this.prefixed("usage-spawn", "&cUsage: /dw spawn boss <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-spawn", "&cUsage: /esmp spawn boss <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 if (!(sender instanceof Player)) {
@@ -3413,7 +3413,7 @@ TabCompleter {
                 Player spawner = (Player)sender;
                 Dimension spawnDimension = Dimension.parse(args[2]);
                 if (spawnDimension == null) {
-                    this.send(sender, this.prefixed("usage-spawn", "&cUsage: /dw spawn boss <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-spawn", "&cUsage: /esmp spawn boss <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 this.phases.put(spawnDimension, Phase.ALIVE);
@@ -3433,7 +3433,7 @@ TabCompleter {
                     if (args.length > 2) {
                         only = Dimension.parse(args[2]);
                         if (only == null) {
-                            this.send(sender, this.prefixed("usage-boss-list", "&cUsage: /dw boss list [nether|end|overworld]", new Object[0]));
+                            this.send(sender, this.prefixed("usage-boss-list", "&cUsage: /esmp boss list [nether|end|overworld]", new Object[0]));
                             return true;
                         }
                     }
@@ -3473,7 +3473,7 @@ TabCompleter {
                     if (args.length > 2) {
                         only = Dimension.parse(args[2]);
                         if (only == null) {
-                            this.send(sender, this.prefixed("usage-boss-" + action, "&cUsage: /dw boss " + action + " [nether|end|overworld]", new Object[0]));
+                            this.send(sender, this.prefixed("usage-boss-" + action, "&cUsage: /esmp boss " + action + " [nether|end|overworld]", new Object[0]));
                             return true;
                         }
                     }
@@ -3498,7 +3498,7 @@ TabCompleter {
                     if (args.length > 2) {
                         only = Dimension.parse(args[2]);
                         if (only == null) {
-                            this.send(sender, this.prefixed("usage-boss-reset", "&cUsage: /dw boss reset [nether|end|overworld]", new Object[0]));
+                            this.send(sender, this.prefixed("usage-boss-reset", "&cUsage: /esmp boss reset [nether|end|overworld]", new Object[0]));
                             return true;
                         }
                     }
@@ -3511,7 +3511,7 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 3 || !args[1].equalsIgnoreCase("spawn")) {
-                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /dw boss list [dimension] | /dw boss spawn <nether|end|overworld> | /dw boss reset [dimension] | /dw boss heal [dimension] | /dw boss kill [dimension]", new Object[0]));
+                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /esmp boss list [dimension] | /esmp boss spawn <nether|end|overworld> | /esmp boss reset [dimension] | /esmp boss heal [dimension] | /esmp boss kill [dimension]", new Object[0]));
                     return true;
                 }
                 if (!(sender instanceof Player)) {
@@ -3521,7 +3521,7 @@ TabCompleter {
                 Player player = (Player)sender;
                 Dimension dimension = Dimension.parse(args[2]);
                 if (dimension == null) {
-                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /dw boss spawn <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-boss", "&cUsage: /esmp boss spawn <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 Phase phase = this.phases.getOrDefault((Object)dimension, Phase.DORMANT);
@@ -3539,12 +3539,12 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 3 || !args[1].equalsIgnoreCase("start")) {
-                    this.send(sender, this.prefixed("usage-ritual", "&cUsage: /dw ritual start <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-ritual", "&cUsage: /esmp ritual start <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 Dimension dimension = Dimension.parse(args[2]);
                 if (dimension == null) {
-                    this.send(sender, this.prefixed("usage-ritual", "&cUsage: /dw ritual start <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-ritual", "&cUsage: /esmp ritual start <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 if (this.phases.get((Object)dimension) != Phase.DEFEATED) {
@@ -3557,7 +3557,7 @@ TabCompleter {
             }
             case "redeem": {
                 if (args.length < 2) {
-                    this.send(sender, this.prefixed("redeem-usage", "&cUsage: /dw redeem <code>", new Object[0]));
+                    this.send(sender, this.prefixed("redeem-usage", "&cUsage: /esmp redeem <code>", new Object[0]));
                     return true;
                 }
                 Dimension found = null;
@@ -3580,7 +3580,7 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 2) {
-                    this.send(sender, this.prefixed("usage-resetplayer", "&cUsage: /dw resetplayer <player>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-resetplayer", "&cUsage: /esmp resetplayer <player>", new Object[0]));
                     return true;
                 }
                 Player target = Bukkit.getPlayerExact((String)args[1]);
@@ -3628,7 +3628,7 @@ TabCompleter {
                 Player player = (Player)sender;
                 Dimension dimension5 = dimension = args.length > 1 ? Dimension.parse(args[1]) : null;
                 if (dimension == null) {
-                    this.send(sender, this.prefixed("usage-setportal", "&cUsage: /dw setportal <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-setportal", "&cUsage: /esmp setportal <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 Location anchor = player.getLocation().clone();
@@ -3654,7 +3654,7 @@ TabCompleter {
                 Player player = (Player)sender;
                 Dimension dimension6 = dimension = args.length > 1 ? Dimension.parse(args[1]) : null;
                 if (dimension == null) {
-                    this.send(sender, this.prefixed("usage-give-key", "&cUsage: /dw give-key <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-give-key", "&cUsage: /esmp give-key <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 ItemStack key = this.keyItem(dimension, 3);
@@ -3691,7 +3691,7 @@ TabCompleter {
                     this.send(sender, this.prefixed("key-portal-list", "&eFrom the %dim% you can open portals to: &f%dests%&e. Craft a key with 2 Ominous Bottles, 5 realm blocks, a netherite ingot and a nether star, then insert 3 keys into your kingdom portal.", "%dim%", own.kingdomName(), "%dests%", String.join((CharSequence)", ", names)));
                     return true;
                 }
-                this.send(sender, this.prefixed("usage-key", "&cUsage: /dw key portal [nether|end|overworld]", new Object[0]));
+                this.send(sender, this.prefixed("usage-key", "&cUsage: /esmp key portal [nether|end|overworld]", new Object[0]));
                 return true;
             }
             case "warlord": 
@@ -3700,7 +3700,7 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 3 || !args[1].equalsIgnoreCase("sword") && !args[1].equalsIgnoreCase("warblade")) {
-                    this.send(sender, this.prefixed("usage-warlord", "&cUsage: /dw warlord sword <player>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-warlord", "&cUsage: /esmp warlord sword <player>", new Object[0]));
                     return true;
                 }
                 Player target = Bukkit.getPlayerExact((String)args[2]);
@@ -3721,12 +3721,12 @@ TabCompleter {
                     return true;
                 }
                 if (args.length < 3) {
-                    this.send(sender, this.prefixed("usage-kingdom", "&cUsage: /dw kingdom <build|tp> <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-kingdom", "&cUsage: /esmp kingdom <build|tp> <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 Dimension dimension = Dimension.parse(args[2]);
                 if (dimension == null) {
-                    this.send(sender, this.prefixed("usage-kingdom", "&cUsage: /dw kingdom <build|tp> <nether|end|overworld>", new Object[0]));
+                    this.send(sender, this.prefixed("usage-kingdom", "&cUsage: /esmp kingdom <build|tp> <nether|end|overworld>", new Object[0]));
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("build")) {
@@ -3749,7 +3749,7 @@ TabCompleter {
                     this.send(sender, this.prefixed("kingdom-teleported", "&aWelcome to the %dim%.", "%dim%", dimension.kingdomName()));
                     return true;
                 }
-                this.send(sender, this.prefixed("usage-kingdom", "&cUsage: /dw kingdom <build|tp> <nether|end|overworld>", new Object[0]));
+                this.send(sender, this.prefixed("usage-kingdom", "&cUsage: /esmp kingdom <build|tp> <nether|end|overworld>", new Object[0]));
                 return true;
             }
             case "pack": {
@@ -3805,7 +3805,7 @@ TabCompleter {
                 Bukkit.removeRecipe((NamespacedKey)this.recipeKey(Dimension.OVERWORLD));
                 this.registerRecipes();
                 this.saveData();
-                this.send(sender, this.prefixed("reset-complete", "&aDimensionWars fully reset: assignments, locks, teleports, books, boss/ritual state, spawns, altars and recipes cleared.", new Object[0]));
+                this.send(sender, this.prefixed("reset-complete", "&aEclipseSMP fully reset: assignments, locks, teleports, books, boss/ritual state, spawns, altars and recipes cleared.", new Object[0]));
                 return true;
             }
             case "reload": {
@@ -3816,7 +3816,7 @@ TabCompleter {
                 this.applyHeartsToDimension(Dimension.NETHER, false);
                 this.applyHeartsToDimension(Dimension.END, false);
                 this.applyHeartsToDimension(Dimension.OVERWORLD, false);
-                this.send(sender, this.prefixed("reloaded", "&aDimensionWars configuration reloaded.", new Object[0]));
+                this.send(sender, this.prefixed("reloaded", "&aEclipseSMP configuration reloaded.", new Object[0]));
                 return true;
             }
         }
@@ -3833,7 +3833,7 @@ TabCompleter {
     }
 
     private boolean requireAdmin(CommandSender sender) {
-        if (sender.hasPermission("dimensionwars.admin")) {
+        if (sender.hasPermission("eclipsesmp.admin")) {
             return true;
         }
         this.send(sender, this.prefixed("no-permission", "&cYou do not have permission to do that.", new Object[0]));
@@ -3851,7 +3851,7 @@ TabCompleter {
         Player player = (Player)sender;
         Dimension dimension = Dimension.parse(raw);
         if (dimension == null) {
-            this.send(sender, this.prefixed("usage-give-key", "&cUsage: /dw key portal <nether|end|overworld>", new Object[0]));
+            this.send(sender, this.prefixed("usage-give-key", "&cUsage: /esmp key portal <nether|end|overworld>", new Object[0]));
             return true;
         }
         ItemStack key = this.keyItem(dimension, 3);
@@ -3911,7 +3911,7 @@ TabCompleter {
     private void sendUsage(CommandSender sender) {
         List<String> lines = this.getConfig().getStringList("messages.usage");
         if (lines.isEmpty()) {
-            lines = List.of("&d/dw menu [player] &7- open the dimension menu", "&d/dw info &7- show dimension populations", "&d/dw setspawn <dimension> &7- save a territory spawn", "&d/dw setaltar <dimension> &7- save a ritual altar location", "&d/dw boss spawn <dimension> &7- summon a boss (once per dimension)", "&d/dw spawn boss <dimension> &7- spawn a boss at your position", "&d/dw boss reset [dimension] &7- remove duplicates and restore the caged boss", "&d/dw boss list [dimension] &7- show boss state, health and location", "&d/dw boss heal [dimension] &7- heal a realm boss to full", "&d/dw boss kill [dimension] &7- kill a realm boss (testing)", "&d/dw ritual start <dimension> &7- start a revival ritual", "&d/dw redeem <code> &7- look up an active ritual code", "&d/dw resetplayer <player> &7- clear an assignment and choice lock", "&d/dw give-table &7- give yourself a crafting table", "&d/dw setportal <dimension> &7- set a portal anchor", "&d/dw key portal [dimension] &7- list or give portal keys", "&d/dw give-key <dimension> &7- give 3 portal keys", "&d/dw warlord sword <player> &7- give the Netherite Warblade", "&d/dw kingdom <build|tp> <dimension> &7- build or visit a kingdom", "&d/dw pack &7- resend the resource pack", "&d/dw reset &7- full reset (admin only)", "&d/dw reload &7- reload config.yml");
+            lines = List.of("&d/esmp menu [player] &7- open the dimension menu", "&d/esmp info &7- show dimension populations", "&d/esmp setspawn <dimension> &7- save a territory spawn", "&d/esmp setaltar <dimension> &7- save a ritual altar location", "&d/esmp boss spawn <dimension> &7- summon a boss (once per dimension)", "&d/esmp spawn boss <dimension> &7- spawn a boss at your position", "&d/esmp boss reset [dimension] &7- remove duplicates and restore the caged boss", "&d/esmp boss list [dimension] &7- show boss state, health and location", "&d/esmp boss heal [dimension] &7- heal a realm boss to full", "&d/esmp boss kill [dimension] &7- kill a realm boss (testing)", "&d/esmp ritual start <dimension> &7- start a revival ritual", "&d/esmp redeem <code> &7- look up an active ritual code", "&d/esmp resetplayer <player> &7- clear an assignment and choice lock", "&d/esmp give-table &7- give yourself a crafting table", "&d/esmp setportal <dimension> &7- set a portal anchor", "&d/esmp key portal [dimension] &7- list or give portal keys", "&d/esmp give-key <dimension> &7- give 3 portal keys", "&d/esmp warlord sword <player> &7- give the Netherite Warblade", "&d/esmp kingdom <build|tp> <dimension> &7- build or visit a kingdom", "&d/esmp pack &7- resend the resource pack", "&d/esmp reset &7- full reset (admin only)", "&d/esmp reload &7- reload config.yml");
         }
         for (String line : lines) {
             this.send(sender, (Component)LEGACY.deserialize(line));
@@ -4236,7 +4236,7 @@ TabCompleter {
         private final BossBar bar;
         private int elapsed;
 
-        private RitualState(DimensionWars dimensionWars, Dimension dimension, int duration, BossBar bar) {
+        private RitualState(EclipseSMP dimensionWars, Dimension dimension, int duration, BossBar bar) {
             this.dimension = dimension;
             this.duration = duration;
             this.bar = bar;
@@ -4256,7 +4256,7 @@ TabCompleter {
         private int specialHits;
         private int calmTicks;
 
-        private BossState(DimensionWars dimensionWars, UUID entityId, Dimension dimension, BossBar bar) {
+        private BossState(EclipseSMP dimensionWars, UUID entityId, Dimension dimension, BossBar bar) {
             this.entityId = entityId;
             this.dimension = dimension;
             this.bar = bar;

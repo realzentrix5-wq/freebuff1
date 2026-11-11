@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "dimensionwars:item/key_end"
+    "layer0": "eclipsesmp:item/key_end"
   }
 }

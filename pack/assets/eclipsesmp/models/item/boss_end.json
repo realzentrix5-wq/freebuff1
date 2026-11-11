@@ -1,12 +1,12 @@
 {
-  "credit": "DimensionWars",
+  "credit": "EclipseSMP",
   "texture_size": [
     128,
     128
   ],
   "textures": {
-    "0": "dimensionwars:item/boss_end_hard",
-    "particle": "dimensionwars:item/boss_end_hard"
+    "0": "eclipsesmp:item/boss_end",
+    "particle": "eclipsesmp:item/boss_end"
   },
   "elements": [
     {

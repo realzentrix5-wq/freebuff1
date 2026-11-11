@@ -11,21 +11,21 @@
         "threshold": 3001,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/catalyst_nether"
+          "model": "eclipsesmp:item/catalyst_nether"
         }
       },
       {
         "threshold": 3002,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/catalyst_end"
+          "model": "eclipsesmp:item/catalyst_end"
         }
       },
       {
         "threshold": 3003,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/catalyst_overworld"
+          "model": "eclipsesmp:item/catalyst_overworld"
         }
       }
     ]

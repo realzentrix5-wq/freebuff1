@@ -11,7 +11,7 @@
         "threshold": 4001,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/sword_netherite"
+          "model": "eclipsesmp:item/sword_netherite"
         }
       }
     ]

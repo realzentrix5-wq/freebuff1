@@ -11,16 +11,16 @@ const bot = mineflayer.createBot({
 bot.on('spawn', () => {
   console.log('SPAWN', JSON.stringify(bot.entity.position));
   setTimeout(() => {
-    console.log('SEND /dw spawn boss end');
-    bot.chat('/dw spawn boss end');
+    console.log('SEND /esmp spawn boss end');
+    bot.chat('/esmp spawn boss end');
   }, 9000);
   setTimeout(() => {
-    console.log('SEND /dw boss reset end');
-    bot.chat('/dw boss reset end');
+    console.log('SEND /esmp boss reset end');
+    bot.chat('/esmp boss reset end');
   }, 16000);
   setTimeout(() => {
-    console.log('SEND /dw pack');
-    bot.chat('/dw pack');
+    console.log('SEND /esmp pack');
+    bot.chat('/esmp pack');
   }, 21000);
   setTimeout(() => {
     console.log('QUIT');

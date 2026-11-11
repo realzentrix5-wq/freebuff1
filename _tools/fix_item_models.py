@@ -35,30 +35,30 @@ def ranged(fallback, entries):
 
 
 ICONS = [
-    (1001, 'dimensionwars:item/nether_icon'),
-    (1002, 'dimensionwars:item/end_icon'),
-    (1003, 'dimensionwars:item/overworld_icon'),
+    (1001, 'eclipsesmp:item/nether_icon'),
+    (1002, 'eclipsesmp:item/end_icon'),
+    (1003, 'eclipsesmp:item/overworld_icon'),
 ]
 BOSSES = [
-    (2001, 'dimensionwars:item/boss_nether'),
-    (2011, 'dimensionwars:item/boss_nether_medium'),
-    (2021, 'dimensionwars:item/boss_nether_hard'),
-    (2002, 'dimensionwars:item/boss_end'),
-    (2012, 'dimensionwars:item/boss_end_medium'),
-    (2022, 'dimensionwars:item/boss_end_hard'),
-    (2003, 'dimensionwars:item/boss_overworld'),
-    (2013, 'dimensionwars:item/boss_overworld_medium'),
-    (2023, 'dimensionwars:item/boss_overworld_hard'),
+    (2001, 'eclipsesmp:item/boss_nether'),
+    (2011, 'eclipsesmp:item/boss_nether_medium'),
+    (2021, 'eclipsesmp:item/boss_nether_hard'),
+    (2002, 'eclipsesmp:item/boss_end'),
+    (2012, 'eclipsesmp:item/boss_end_medium'),
+    (2022, 'eclipsesmp:item/boss_end_hard'),
+    (2003, 'eclipsesmp:item/boss_overworld'),
+    (2013, 'eclipsesmp:item/boss_overworld_medium'),
+    (2023, 'eclipsesmp:item/boss_overworld_hard'),
 ]
 KEYS = [
-    (3001, 'dimensionwars:item/key_nether'),
-    (3002, 'dimensionwars:item/key_end'),
-    (3003, 'dimensionwars:item/key_overworld'),
+    (3001, 'eclipsesmp:item/key_nether'),
+    (3002, 'eclipsesmp:item/key_end'),
+    (3003, 'eclipsesmp:item/key_overworld'),
 ]
 CATALYSTS = [
-    (3001, 'dimensionwars:item/catalyst_nether'),
-    (3002, 'dimensionwars:item/catalyst_end'),
-    (3003, 'dimensionwars:item/catalyst_overworld'),
+    (3001, 'eclipsesmp:item/catalyst_nether'),
+    (3002, 'eclipsesmp:item/catalyst_end'),
+    (3003, 'eclipsesmp:item/catalyst_overworld'),
 ]
 
 write(os.path.join(ITEMS, 'paper.json'), ranged('minecraft:item/paper', ICONS + BOSSES))
@@ -67,7 +67,7 @@ write(os.path.join(ITEMS, 'netherite_ingot.json'),
 write(os.path.join(ITEMS, 'nether_star.json'),
       ranged('minecraft:item/nether_star', CATALYSTS))
 write(os.path.join(ITEMS, 'netherite_sword.json'),
-      ranged('minecraft:item/netherite_sword', [(4001, 'dimensionwars:item/sword_netherite')]))
+      ranged('minecraft:item/netherite_sword', [(4001, 'eclipsesmp:item/sword_netherite')]))
 
 # Strip the removed overrides field from the vanilla item models, which are now only
 # used as the fallback model for their base item.
@@ -117,7 +117,7 @@ def boss_display(height_px, min_y_px):
     }
 
 
-boss_dir = os.path.join(PACK, 'assets/dimensionwars/models/item')
+boss_dir = os.path.join(PACK, 'assets/eclipsesmp/models/item')
 for name in sorted(os.listdir(boss_dir)):
     if not (name.startswith('boss_') and name.endswith('.json')):
         continue

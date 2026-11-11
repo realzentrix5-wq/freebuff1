@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "dimensionwars:item/catalyst_overworld"
+    "layer0": "eclipsesmp:item/catalyst_end"
   }
 }

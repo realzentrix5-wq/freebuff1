@@ -11,21 +11,21 @@
         "threshold": 3001,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/key_nether"
+          "model": "eclipsesmp:item/key_nether"
         }
       },
       {
         "threshold": 3002,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/key_end"
+          "model": "eclipsesmp:item/key_end"
         }
       },
       {
         "threshold": 3003,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/key_overworld"
+          "model": "eclipsesmp:item/key_overworld"
         }
       }
     ]

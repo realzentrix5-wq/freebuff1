@@ -14,7 +14,7 @@ bot.once('spawn', async () => {
   bot.chat('/give Bot minecraft:netherite_ingot 4');
   bot.chat('/give Bot minecraft:nether_star 2');
   await sleep(2500);
-  bot.chat('/recipe give Bot dimensionwars:portal_key_end');
+  bot.chat('/recipe give Bot eclipsesmp:portal_key_end');
   await sleep(800);
 
   const netherite = bot.registry.itemsByName.netherite_ingot.id;

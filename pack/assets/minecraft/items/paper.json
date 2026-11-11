@@ -11,84 +11,84 @@
         "threshold": 1001,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/nether_icon"
+          "model": "eclipsesmp:item/nether_icon"
         }
       },
       {
         "threshold": 1002,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/end_icon"
+          "model": "eclipsesmp:item/end_icon"
         }
       },
       {
         "threshold": 1003,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/overworld_icon"
+          "model": "eclipsesmp:item/overworld_icon"
         }
       },
       {
         "threshold": 2001,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_nether"
+          "model": "eclipsesmp:item/boss_nether"
         }
       },
       {
         "threshold": 2002,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_end"
+          "model": "eclipsesmp:item/boss_end"
         }
       },
       {
         "threshold": 2003,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_overworld"
+          "model": "eclipsesmp:item/boss_overworld"
         }
       },
       {
         "threshold": 2011,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_nether_medium"
+          "model": "eclipsesmp:item/boss_nether_medium"
         }
       },
       {
         "threshold": 2012,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_end_medium"
+          "model": "eclipsesmp:item/boss_end_medium"
         }
       },
       {
         "threshold": 2013,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_overworld_medium"
+          "model": "eclipsesmp:item/boss_overworld_medium"
         }
       },
       {
         "threshold": 2021,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_nether_hard"
+          "model": "eclipsesmp:item/boss_nether_hard"
         }
       },
       {
         "threshold": 2022,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_end_hard"
+          "model": "eclipsesmp:item/boss_end_hard"
         }
       },
       {
         "threshold": 2023,
         "model": {
           "type": "minecraft:model",
-          "model": "dimensionwars:item/boss_overworld_hard"
+          "model": "eclipsesmp:item/boss_overworld_hard"
         }
       }
     ]

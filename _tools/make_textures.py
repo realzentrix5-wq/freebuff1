@@ -1,7 +1,7 @@
 """Generate crisp 16x16 pixel-art item textures for the Eclipse SMP pack."""
 import os, struct, zlib
 
-OUT = 'pack/assets/dimensionwars/textures/item'
+OUT = 'pack/assets/eclipsesmp/textures/item'
 os.makedirs(OUT, exist_ok=True)
 
 

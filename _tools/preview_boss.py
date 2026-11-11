@@ -16,8 +16,8 @@ import sys
 from PIL import Image, ImageDraw
 
 PACK = 'pack'
-MODELS = os.path.join(PACK, 'assets/dimensionwars/models/item')
-TEXTURES = os.path.join(PACK, 'assets/dimensionwars/textures/item')
+MODELS = os.path.join(PACK, 'assets/eclipsesmp/models/item')
+TEXTURES = os.path.join(PACK, 'assets/eclipsesmp/textures/item')
 OUT = sys.argv[1] if len(sys.argv) > 1 else '/tmp/boss_previews'
 os.makedirs(OUT, exist_ok=True)
 
@@ -38,7 +38,7 @@ def load_model(name):
 
 def texture_for(model):
     path = model['textures']['0'].split(':', 1)[1]
-    image = Image.open(os.path.join(PACK, 'assets/dimensionwars/textures', path + '.png'))
+    image = Image.open(os.path.join(PACK, 'assets/eclipsesmp/textures', path + '.png'))
     return image.convert('RGBA')
 
 

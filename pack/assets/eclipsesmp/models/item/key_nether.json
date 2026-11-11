@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "dimensionwars:item/overworld_icon"
+    "layer0": "eclipsesmp:item/key_nether"
   }
 }

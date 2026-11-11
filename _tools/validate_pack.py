@@ -195,31 +195,31 @@ for name, data in items.items():
 # ------------------------------------------------- routing expected by the plugin
 EXPECTED = {
     'minecraft:paper': {
-        1001: 'dimensionwars:item/nether_icon',
-        1002: 'dimensionwars:item/end_icon',
-        1003: 'dimensionwars:item/overworld_icon',
-        2001: 'dimensionwars:item/boss_nether',
-        2011: 'dimensionwars:item/boss_nether_medium',
-        2021: 'dimensionwars:item/boss_nether_hard',
-        2002: 'dimensionwars:item/boss_end',
-        2012: 'dimensionwars:item/boss_end_medium',
-        2022: 'dimensionwars:item/boss_end_hard',
-        2003: 'dimensionwars:item/boss_overworld',
-        2013: 'dimensionwars:item/boss_overworld_medium',
-        2023: 'dimensionwars:item/boss_overworld_hard',
+        1001: 'eclipsesmp:item/nether_icon',
+        1002: 'eclipsesmp:item/end_icon',
+        1003: 'eclipsesmp:item/overworld_icon',
+        2001: 'eclipsesmp:item/boss_nether',
+        2011: 'eclipsesmp:item/boss_nether_medium',
+        2021: 'eclipsesmp:item/boss_nether_hard',
+        2002: 'eclipsesmp:item/boss_end',
+        2012: 'eclipsesmp:item/boss_end_medium',
+        2022: 'eclipsesmp:item/boss_end_hard',
+        2003: 'eclipsesmp:item/boss_overworld',
+        2013: 'eclipsesmp:item/boss_overworld_medium',
+        2023: 'eclipsesmp:item/boss_overworld_hard',
     },
     'minecraft:netherite_ingot': {
-        3001: 'dimensionwars:item/key_nether',
-        3002: 'dimensionwars:item/key_end',
-        3003: 'dimensionwars:item/key_overworld',
+        3001: 'eclipsesmp:item/key_nether',
+        3002: 'eclipsesmp:item/key_end',
+        3003: 'eclipsesmp:item/key_overworld',
     },
     'minecraft:nether_star': {
-        3001: 'dimensionwars:item/catalyst_nether',
-        3002: 'dimensionwars:item/catalyst_end',
-        3003: 'dimensionwars:item/catalyst_overworld',
+        3001: 'eclipsesmp:item/catalyst_nether',
+        3002: 'eclipsesmp:item/catalyst_end',
+        3003: 'eclipsesmp:item/catalyst_overworld',
     },
     'minecraft:netherite_sword': {
-        4001: 'dimensionwars:item/sword_netherite',
+        4001: 'eclipsesmp:item/sword_netherite',
     },
 }
 
@@ -228,7 +228,7 @@ EXPECTED = {
 # inside the texture, and the display transform must stand them on the ground at a
 # sensible height instead of burying or floating them.
 for name, (path, data) in models.items():
-    if not name.startswith('dimensionwars:item/boss_'):
+    if not name.startswith('eclipsesmp:item/boss_'):
         continue
     size = data.get('texture_size')
     if not size and data.get('parent') in models:

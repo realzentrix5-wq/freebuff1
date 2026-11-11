@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "dimensionwars:item/end_icon"
+    "layer0": "eclipsesmp:item/end_icon"
   }
 }

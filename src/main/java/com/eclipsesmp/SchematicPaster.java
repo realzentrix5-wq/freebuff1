@@ -1,4 +1,4 @@
-package com.dimensionwars;
+package com.eclipsesmp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
