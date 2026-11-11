@@ -26,11 +26,11 @@ Paper **1.21.11** plugin (Java 21) that turns a server into three competing real
 mvn package
 ```
 
-The plugin jar is written to `target/EclipseSMP.jar`.
+The plugin jar is written to `target/EclipseSMP-1.0.0.jar`.
 
 ## Install
 
-1. Build the jar (or copy `target/EclipseSMP.jar`).
+1. Build the jar (or copy `target/EclipseSMP-1.0.0.jar`).
 2. Drop it into the server's `plugins/` folder.
 3. Restart the server. Kingdoms are chosen near each world's spawn and built
    automatically; watch the console for "Kingdom is ready".
