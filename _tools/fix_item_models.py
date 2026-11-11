@@ -85,34 +85,41 @@ for name in ('paper', 'netherite_ingot', 'nether_star', 'netherite_sword'):
 #
 # The client applies an item transform as translate(-0.5 blocks), rotate, scale,
 # translate (ItemTransform#apply), and the item display renderer spins the model 180
-# degrees around Y before drawing it, so `fixed` uses rotation 180 to cancel the flip
-# and translation 8*scale to lift the normalised -0.5 block feet offset back to 0.
+# degrees around Y before drawing it, so `fixed` uses rotation 180 to cancel the flip.
+# Item rendering also multiplies every display transform by a base 0.5 scale, which is
+# why a scale of 1.4 renders a 32px model 1.4 blocks tall instead of 2.8. Sizes below
+# are therefore twice what the geometry alone would suggest.
+#
+# Model point p (element coords, 16 units per block) maps to
+#   y = ((p - 8) * scale + translation) / 16 * 0.5
+# so standing the feet (which the normalisation leaves at y=0) on the ground needs
+# translation = 8 * scale, and a height of 2 blocks * scale * 0.5 = 2.8 blocks needs
+# a scale of 2.8.
 MAX_COORD = 32.0
 BOSS_HEIGHT_BLOCKS = 2.8
+BASE_SCALE = 0.5
 
 
 def boss_display(height_px, min_y_px):
-    fixed_scale = BOSS_HEIGHT_BLOCKS * 16.0 / height_px
-    gui_scale = 16.0 / height_px  # one inventory slot
-    centre_y = (min_y_px + height_px / 2.0) - 8.0
+    centre_px = min_y_px + height_px / 2.0
+    blocks_per_px = BASE_SCALE / 16.0
+
+    def transform(wanted_blocks, target_centre, spin=False):
+        scale = wanted_blocks / (height_px * blocks_per_px)
+        # Solve ((centre_px - 8) * scale + translation) / 16 * 0.5 == target_centre.
+        translation = 32.0 * target_centre - (centre_px - 8.0) * scale
+        return {
+            'rotation': [0, 180 if spin else 0, 0],
+            'translation': [0, round(translation, 3), 0],
+            'scale': [round(scale, 3)] * 3,
+        }
+
     return {
         'gui_light': 'front',
         'display': {
-            'gui': {
-                'rotation': [0, 0, 0],
-                'translation': [0, round(8.0 - centre_y * gui_scale, 3), 0],
-                'scale': [round(gui_scale, 3)] * 3,
-            },
-            'ground': {
-                'rotation': [0, 0, 0],
-                'translation': [0, round(8.0 * gui_scale, 3), 0],
-                'scale': [round(gui_scale, 3)] * 3,
-            },
-            'fixed': {
-                'rotation': [0, 180, 0],
-                'translation': [0, round(8.0 * fixed_scale, 3), 0],
-                'scale': [round(fixed_scale, 3)] * 3,
-            },
+            'gui': transform(1.0, 0.5),          # fills one inventory slot
+            'ground': transform(0.5, 0.25),      # dropped item, feet on the ground
+            'fixed': transform(BOSS_HEIGHT_BLOCKS, BOSS_HEIGHT_BLOCKS / 2.0, spin=True),
         },
     }
 

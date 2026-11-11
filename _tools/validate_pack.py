@@ -264,10 +264,12 @@ for name, (path, data) in models.items():
     if not ys:
         fail('%s has no geometry' % path)
         continue
+    # The renderer multiplies every display transform by a base 0.5 scale, so
+    # y = ((p - 8) * scale + translation) / 16 * 0.5.
     scale = fixed.get('scale', [1, 1, 1])[1]
     lift = fixed.get('translation', [0, 0, 0])[1]
-    bottom = (min(ys) - 8.0) * scale / 16.0 + lift / 16.0
-    top = (max(ys) - 8.0) * scale / 16.0 + lift / 16.0
+    bottom = ((min(ys) - 8.0) * scale + lift) / 32.0
+    top = ((max(ys) - 8.0) * scale + lift) / 32.0
     if abs(bottom) > 0.12:
         fail('%s feet at %+.2f blocks, expected the ground (fixed translation/scale)'
              % (path, bottom))
