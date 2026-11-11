@@ -97,17 +97,20 @@ for name in ('paper', 'netherite_ingot', 'nether_star', 'netherite_sword'):
 # a scale of 2.8.
 MAX_COORD = 32.0
 BOSS_HEIGHT_BLOCKS = 2.8
+# Measured against a live 1.21.11 client with a 32px model: the fixed/ground
+# contexts render at half size, the GUI slot camera at about five sixteenths.
 BASE_SCALE = 0.5
+BASE_GUI = 0.3125
+BASE_HAND = 0.5
 
 
 def boss_display(height_px, min_y_px):
     centre_px = min_y_px + height_px / 2.0
-    blocks_per_px = BASE_SCALE / 16.0
 
-    def transform(wanted_blocks, target_centre, spin=False):
-        scale = wanted_blocks / (height_px * blocks_per_px)
-        # Solve ((centre_px - 8) * scale + translation) / 16 * 0.5 == target_centre.
-        translation = 32.0 * target_centre - (centre_px - 8.0) * scale
+    def transform(wanted_blocks, target_centre, base=BASE_SCALE, spin=False):
+        scale = wanted_blocks / (height_px * base / 16.0)
+        # Solve ((centre_px - 8) * scale + translation) / 16 * base == target_centre.
+        translation = (target_centre * 16.0 - (centre_px - 8.0) * scale * base) / base
         return {
             'rotation': [0, 180 if spin else 0, 0],
             'translation': [0, round(translation, 3), 0],
@@ -117,9 +120,14 @@ def boss_display(height_px, min_y_px):
     return {
         'gui_light': 'front',
         'display': {
-            'gui': transform(1.0, 0.5),          # fills one inventory slot
-            'ground': transform(0.5, 0.25),      # dropped item, feet on the ground
+            # Scale and translation stay in the same 8:1 ratio that centres the icon in
+            # the slot; the GUI camera magnifies by about 1/3, so 1.4 fills the slot.
+            'gui': {'rotation': [0, 180, 0], 'translation': [0, 11.2, 0],
+                    'scale': [1.4, 1.4, 1.4]},
+            'ground': transform(0.5, 0.25),                 # dropped, feet on the ground
             'fixed': transform(BOSS_HEIGHT_BLOCKS, BOSS_HEIGHT_BLOCKS / 2.0, spin=True),
+            'firstperson_righthand': transform(0.7, 0.35, base=BASE_HAND, spin=True),
+            'thirdperson_righthand': transform(0.7, 0.35, base=BASE_HAND, spin=True),
         },
     }
 
