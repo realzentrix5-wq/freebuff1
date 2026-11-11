@@ -7,8 +7,11 @@ generated from `config.yml` — no manual world building, no external web host.
 
 | File | What it is |
 | --- | --- |
+| `EclipseSMP-1.0.0.zip` | Everything below in one archive, with this file. |
 | `target/EclipseSMP-1.0.0.jar` | The plugin. Drop it into `plugins/`. |
 | `EclipseSMP-ResourcePack-1.0.0.zip` | The pack on its own, for manual installs. |
+| `EclipseSMP-EndCastle.zip` | The End castle map. |
+| `EclipseSMP-EndIsland-wip.zip` | The End island map (work in progress). |
 | `_server/plugins/EclipseSMP/resourcepack/EclipseSMP-ResourcePack.zip` | The copy the plugin writes at startup and serves. |
 
 The jar already contains the pack: the plugin hashes it, serves it on port 8123
